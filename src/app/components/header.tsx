@@ -17,8 +17,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { Facebook, Instagram, X } from "lucide-react";
-import { useState } from "react";
-import { useMediaQuery } from "@mantine/hooks";
+import { useDisclosure } from "@mantine/hooks";
 
 const headerLinks = [
   { label: "Notícias", href: "/noticias" },
@@ -28,24 +27,23 @@ const headerLinks = [
 ];
 
 export default function Header() {
-  const [opened, setOpened] = useState(false);
+  const [opened, { toggle, close }] = useDisclosure(false);
   const theme = useMantineTheme();
-  const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
 
   return (
     <header>
-      {/* Top Bar (hidden on mobile) */}
-      <Box bg="#00adef" py={5} h={40} visibleFrom="sm">
-        <Container size="xl" h="100%" px={isMobile ? "sm" : "xl"}>
+      {/* Top Bar - Oculta em mobile */}
+      <Box bg="#00adef" py={5} h={40} display={{ base: "none", sm: "block" }}>
+        <Container size="xl" h="100%">
           <Flex justify="space-between" align="center" h="100%">
-            <Text color="white" fs="italic" size="sm">
+            <Text c="white" fs="italic" size="sm">
               Fique por dentro das últimas notícias.
             </Text>
             <Group gap="xs">
-              <Text color="white" size="sm">
+              <Text c="white" size="sm">
                 @mt9.com.br
               </Text>
-              <Divider color="dark" orientation="vertical" />
+              <Divider c="dark" orientation="vertical" />
               <ActionIcon variant="transparent" size="sm">
                 <Instagram color="white" size={16} />
               </ActionIcon>
@@ -57,30 +55,46 @@ export default function Header() {
         </Container>
       </Box>
 
-      {/* Main Header */}
+      {/* Header Principal */}
       <Container
         size="xl"
-        px={40}
+        px={{ base: "md", sm: "xl" }}
         py="sm"
-        h={{ base: 80, sm: 110 }}
+        h={{ base: 70, sm: 110 }}
       >
-        <Flex justify={"space-between"} align="center" wrap="nowrap" gap="sm">
-          {/* Logo and Navigation */}
+        <Flex
+          justify="space-between"
+          align="center"
+          wrap="nowrap"
+          gap="sm"
+          h="100%"
+        >
+          {/* Logo e Navegação */}
           <Flex align="center" gap="md" style={{ flex: 1 }}>
-            <Link href="/" style={{ lineHeight: 0 }} className="hover:scale-105 transition-transform">
+            <Link
+              href="/"
+              style={{
+                lineHeight: 0,
+                transition: "transform 0.2s ease",
+              }}
+              className="hover:scale-105"
+            >
               <Image
                 src="/images/mt9-logo.svg"
                 alt="MT9 Notícias e Comércios"
-                width={140}
-                height={100}
+                width={120}
+                height={90}
                 priority
               />
             </Link>
 
-            <Divider orientation="vertical" visibleFrom="sm" />
+            <Divider
+              orientation="vertical"
+              display={{ base: "none", sm: "block" }}
+            />
 
-            {/* Desktop Navigation */}
-            <Group gap="xs" visibleFrom="sm">
+            {/* Navegação Desktop */}
+            <Group gap="xs" display={{ base: "none", sm: "flex" }}>
               {headerLinks.map((link) => (
                 <Button
                   key={link.label}
@@ -89,6 +103,15 @@ export default function Header() {
                   href={link.href}
                   px="sm"
                   size="compact-md"
+                  styles={(theme) => ({
+                    root: {
+                      transition: "all 0.2s ease",
+                      "&:hover": {
+                        backgroundColor: theme.colors.gray[1],
+                        transform: "translateY(-1px)",
+                      },
+                    },
+                  })}
                 >
                   {link.label}
                 </Button>
@@ -96,77 +119,92 @@ export default function Header() {
             </Group>
           </Flex>
 
-          {/* Mobile Burger */}
-          <Box hiddenFrom="sm">
+          {/* Burger Menu Mobile */}
+          <Box display={{ base: "block", sm: "none" }}>
             <Burger
               opened={opened}
-              onClick={() => setOpened((o) => !o)}
+              onClick={toggle}
               color={theme.colors.gray[7]}
               size="sm"
             />
           </Box>
 
-          {/* Ad Space */}
+          {/* Espaço para Publicidade */}
           <Box
             miw={300}
             mih={90}
-            visibleFrom="xl"
+            display={{ base: "none", xl: "flex" }}
             style={{
               border: `${rem(2)} dashed ${theme.colors.gray[3]}`,
-              display: "flex",
               alignItems: "center",
               justifyContent: "center",
               flex: 1,
               maxWidth: 728,
+              borderRadius: theme.radius.sm,
             }}
           >
-            Publicidade
+            <Text c="dimmed" size="sm" ta="center">
+              Publicidade
+            </Text>
           </Box>
         </Flex>
       </Container>
 
-      {/* Mobile Navigation Drawer */}
+      {/* Drawer de Navegação Mobile */}
       <Drawer
         opened={opened}
-        onClose={() => setOpened(false)}
+        onClose={close}
         position="right"
         size="100%"
         padding="md"
         withCloseButton={false}
         zIndex={10000}
+        styles={{
+          body: {
+            padding: 0,
+            height: "100%",
+          },
+        }}
       >
-        <Stack h="100%">
-          <Flex justify="flex-end" p="md">
+        <Stack h="100%" p="md">
+          {/* Botão de Fechar */}
+          <Flex justify="flex-end" pb="md">
             <ActionIcon
               variant="outline"
               color="dark"
-              onClick={() => setOpened(false)}
+              onClick={close}
+              size="lg"
             >
               <X size={18} />
             </ActionIcon>
           </Flex>
-          
-          <Stack justify="center" flex={1}>
+
+          {/* Links de Navegação */}
+          <Stack justify="center" flex={1} gap="md">
             {headerLinks.map((link) => (
               <Button
                 key={link.label}
                 component={Link}
                 href={link.href}
-                variant={"subtle"}
+                variant="subtle"
                 size="xl"
-                onClick={() => setOpened(false)}
-                styles={{ inner: { justifyContent: "center" } }}
+                onClick={close}
+                styles={{
+                  inner: { justifyContent: "center" },
+                  root: { height: rem(60) },
+                }}
               >
                 {link.label}
               </Button>
             ))}
           </Stack>
-          
+
+          {/* Redes Sociais */}
           <Group justify="center" pb="xl">
-            <ActionIcon variant="filled" size="lg">
+            <ActionIcon variant="filled" size="lg" color="#00adef">
               <Instagram size={20} />
             </ActionIcon>
-            <ActionIcon variant="filled" size="lg">
+            <ActionIcon variant="filled" size="lg" color="#00adef">
               <Facebook size={20} />
             </ActionIcon>
           </Group>
