@@ -1,12 +1,16 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
-import "./globals.css";
+import "@mantine/core/styles.css";
+import {
+  ColorSchemeScript,
+  MantineProvider,
+  mantineHtmlProps,
+} from "@mantine/core";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
-
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -19,8 +23,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${geistSans.className} antialiased`}>{children}</body>
+    <html lang="pt-br" {...mantineHtmlProps}>
+      <head>
+        <ColorSchemeScript />
+      </head>
+      <body className={`${geistSans.className} antialiased`}>
+        <MantineProvider>{children}</MantineProvider>
+      </body>
     </html>
   );
 }
