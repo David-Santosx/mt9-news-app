@@ -2,6 +2,7 @@
 import { useForm } from "@mantine/form";
 import { Stack, TextInput, Group, Button, Checkbox } from "@mantine/core";
 import FormSubmit from "../actions/formSubmit";
+import Image from "next/image";
 
 export default function AuthForm() {
   const form = useForm({
@@ -39,8 +40,16 @@ export default function AuthForm() {
           key={form.key("rememberMe")}
           {...form.getInputProps("rememberMe", { type: "checkbox" })}
         />
-        <Group justify={"flex-end"} mt="md">
-          <Button loading={form.submitting} type="submit">Login</Button>
+        <Group justify={"space-between"} mt="md">
+          <Image
+            src={"/images/mt9-logo.svg"}
+            width={80}
+            height={50}
+            alt="MT9 Notícias e Comércios"
+          />
+          <Button loading={form.submitting} type="submit">
+            Login
+          </Button>
         </Group>
       </Stack>
     </form>
