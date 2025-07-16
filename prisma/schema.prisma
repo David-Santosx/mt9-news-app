@@ -86,3 +86,20 @@ model News {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+enum AdPosition {
+  HEADER     // 728x90
+  HIGHLIGHT  // 300x250
+}
+
+model Advertisement {
+  id String @id @default(cuid())
+  campaing String @unique
+  startDate DateTime
+  endDate DateTime
+  image String?
+  link String?
+  position AdPosition
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
