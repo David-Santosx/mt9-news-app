@@ -13,7 +13,6 @@ import {
 } from "@mantine/core";
 import {
   Home,
-  ShieldUser,
   Settings,
   LogOut,
   ChevronRight,
@@ -47,11 +46,6 @@ const navigationItems: NavigationItem[] = [
     label: "Publicidades",
     icon: <MonitorPlay size={20} />,
     href: "/dashboard/publicidades",
-  },
-  {
-    label: "Administradores",
-    icon: <ShieldUser size={20} />,
-    href: "/dashboard/administradores",
   },
 ];
 
