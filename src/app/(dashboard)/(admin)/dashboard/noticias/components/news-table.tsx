@@ -13,7 +13,7 @@ interface News {
 }
 
 export function NewsTable() {
-  const [scrolled, setScrolled] = useState(false);
+  const [, setScrolled] = useState(false);
   const [news, setNews] = useState<News[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
