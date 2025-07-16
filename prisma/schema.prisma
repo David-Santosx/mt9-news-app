@@ -72,3 +72,17 @@ model Verification {
 
   @@map("verification")
 }
+
+model News {
+  id String @id @default(cuid())
+  title String
+  subtitle String?
+  publisher String
+  tags String[]
+  category String
+  content String
+  publishedAt DateTime
+  image String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

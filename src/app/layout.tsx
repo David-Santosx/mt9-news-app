@@ -8,7 +8,9 @@ import {
 } from "@mantine/core";
 import "./globals.css";
 import "@mantine/notifications/styles.css";
+import "@mantine/dates/styles.css";
 import { Notifications } from "@mantine/notifications";
+import { ModalsProvider } from "@mantine/modals";
 
 const rubik = Rubik({
   variable: "--font-rubik",
@@ -32,7 +34,7 @@ export default function RootLayout({
       <body className={`antialiased`}>
         <MantineProvider theme={theme} withGlobalClasses withCssVariables>
           <Notifications />
-          {children}
+          <ModalsProvider>{children}</ModalsProvider>
         </MantineProvider>
       </body>
     </html>

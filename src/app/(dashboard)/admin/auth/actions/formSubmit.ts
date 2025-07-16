@@ -1,5 +1,5 @@
 import { notifications } from "@mantine/notifications";
-import { authClient } from "../../../../../../auth-client";
+import { authClient } from "../../../../../lib/auth-client";
 
 export default async function FormSubmit(values: {
   email: string;
