@@ -8,7 +8,7 @@ export default async function FormSubmit(values: {
 }) {
   const { email, password, rememberMe } = values;
   return await authClient.signIn.email(
-    { email, password, rememberMe, callbackURL: "/admin/dashboard" },
+    { email, password, rememberMe, callbackURL: "/dashboard" },
     {
       onSuccess: () => {
         notifications.show({
