@@ -6,7 +6,7 @@ import { isAdmin } from "@/lib/isAdmin";
 import { deleteFromS3, validateNewsFields } from "./utils";
 
 const prisma = new PrismaClient();
-const BUCKET = "news-images";
+const BUCKET = process.env.S3_NEWS_BUCKET || "news-images";
 
 /**
  * Cria uma notícia (privado: admin)

@@ -2,7 +2,8 @@ import { notifications } from "@mantine/notifications";
 
 export default async function NewsFormSubmit(formData: FormData) {
   try {
-    const response = await fetch("/api/admin/noticias", {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+    const response = await fetch(`${baseUrl}/api/admin/noticias`, {
       method: "POST",
       body: formData,
     });

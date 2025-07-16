@@ -1,6 +1,7 @@
 export async function updateNews(id: string, formData: FormData) {
   try {
-    const response = await fetch(`/api/admin/noticias/${id}`, {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+    const response = await fetch(`${baseUrl}/api/admin/noticias/${id}`, {
       method: "PATCH",
       body: formData,
     });
