@@ -1,14 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@/generated/prisma";
-import { s3, uploadToS3 } from "@/services/upload-s3";
+import { uploadToS3 } from "@/services/upload-s3";
 import { headers } from "next/headers";
 import { isAdmin } from "@/lib/isAdmin";
-import { validateNewsFields } from "./utils";
+import { deleteFromS3, validateNewsFields } from "./utils";
 
 const prisma = new PrismaClient();
 const BUCKET = "news-images";
-
-// Função isAdmin agora está em src/lib/isAdmin.ts e recebe os headers como parâmetro
 
 /**
  * Cria uma notícia (privado: admin)
@@ -165,26 +163,4 @@ export async function DELETE(request: NextRequest) {
       { status: 400 }
     );
   }
-}
-
-/**
- * Remove arquivo do S3
- */
-async function deleteFromS3(imageUrl: string, bucket: string) {
-  /**
-   * Remove o arquivo do storage S3/MinIO
-   * @param imageUrl URL completa da imagem
-   * @param bucket Nome do bucket
-   */
-  // Extrai o nome do arquivo da URL
-  const urlParts = imageUrl.split("/");
-  const filename = urlParts[urlParts.length - 1];
-  // Remove do bucket
-  const { DeleteObjectCommand } = await import("@aws-sdk/client-s3");
-  await s3.send(
-    new DeleteObjectCommand({
-      Bucket: bucket,
-      Key: filename,
-    })
-  );
 }
