@@ -71,15 +71,17 @@ export default function EditNewsForm({ newsId }: EditNewsFormProps) {
     async function loadNews() {
       try {
         const news = await fetchNewsById(newsId);
-        form.setValues({
-          title: news.title,
-          subtitle: news.subtitle,
-          category: news.category,
-          content: news.content,
-          tags: news.tags,
-          publisher: news.publisher,
-          publicationDate: new Date(news.publishedAt),
-        });
+        if (isLoading) {
+          form.setValues({
+            title: news.title,
+            subtitle: news.subtitle,
+            category: news.category,
+            content: news.content,
+            tags: news.tags,
+            publisher: news.publisher,
+            publicationDate: new Date(news.publishedAt),
+          });
+        }
       } catch {
         notifications.show({
           title: "Erro",
@@ -93,7 +95,7 @@ export default function EditNewsForm({ newsId }: EditNewsFormProps) {
     }
 
     loadNews();
-  }, [newsId, form, router]);
+  }, [newsId, form, router, isLoading]);
 
   const handleSubmit = async (values: typeof form.values) => {
     try {
