@@ -16,6 +16,8 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Newspaper, MonitorPlay } from "lucide-react";
 
+// Note: Como este é um componente client-side, os metadados são definidos no layout parent
+
 type NewsCount = {
   count: number;
   createdAt: string;
