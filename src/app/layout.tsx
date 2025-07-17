@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
   ),
   title: {
-    template: "%s | MT9 News",
+    template: "%s | MT9 Notícias & Comércios",
     default: "MT9 Notícias & Comércios - Confie e se informe",
   },
   description:
