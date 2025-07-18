@@ -20,7 +20,8 @@ import { Facebook, Instagram, X } from "lucide-react";
 import { useDisclosure } from "@mantine/hooks";
 
 const headerLinks = [
-  { label: "Notícias", href: "/noticias" },
+  { label: "Geral", href: "/geral" },
+  { label: "Política", href: "/politica" },
   { label: "Esportes", href: "/esportes" },
   { label: "Cultura", href: "/cultura" },
   { label: "Comércios", href: "/comercios" },
@@ -56,45 +57,74 @@ export default function Header() {
       </Box>
 
       {/* Header Principal */}
-      <Container
-        size="xl"
-        px={{ base: "md", sm: "xl" }}
-        py="sm"
-        h={{ base: 70, sm: 110 }}
-      >
-        <Flex
-          justify="space-between"
-          align="center"
-          wrap="nowrap"
-          gap="sm"
-          h="100%"
-        >
-          {/* Logo e Navegação */}
-          <Flex align="center" gap="md" style={{ flex: 1 }}>
-            <Link
-              href="/"
-              style={{
-                lineHeight: 0,
-                transition: "transform 0.2s ease",
-              }}
-              className="hover:scale-105"
-            >
-              <Image
-                src="/images/mt9-logo.svg"
-                alt="MT9 Notícias e Comércios"
-                width={120}
-                height={90}
-                priority
+      <Container size="xl" px={{ base: "md", sm: "xl" }} py="md">
+        <Stack gap="md">
+          {/* Primeira Linha: Logo e Publicidade */}
+          <Flex
+            justify="space-between"
+            align="center"
+            wrap={{ base: "wrap", md: "nowrap" }}
+            gap={{ base: "md", md: "xl" }}
+          >
+            {/* Logo */}
+            <Box>
+              <Link
+                href="/"
+                style={{
+                  lineHeight: 0,
+                  transition: "transform 0.2s ease",
+                }}
+                className="hover:scale-105"
+              >
+                <Image
+                  src="/images/mt9-logo.svg"
+                  alt="MT9 Notícias e Comércios"
+                  width={120}
+                  height={90}
+                  priority
+                />
+              </Link>
+            </Box>
+
+            {/* Burger Menu Mobile */}
+            <Box display={{ base: "block", md: "none" }} ml="auto">
+              <Burger
+                opened={opened}
+                onClick={toggle}
+                color={theme.colors.gray[7]}
+                size="sm"
               />
-            </Link>
+            </Box>
 
-            <Divider
-              orientation="vertical"
-              display={{ base: "none", sm: "block" }}
-            />
+            {/* Publicidade Desktop */}
+            <Box
+              display={{ base: "none", md: "block" }}
+              style={{ flex: 1, maxWidth: 728 }}
+            >
+              <Box
+                mih={90}
+                w="100%"
+                style={{
+                  border: `${rem(2)} dashed ${theme.colors.gray[3]}`,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderRadius: theme.radius.sm,
+                }}
+              >
+                <Text c="dimmed" size="sm" ta="center">
+                  728x90
+                </Text>
+              </Box>
+            </Box>
+          </Flex>
 
-            {/* Navegação Desktop */}
-            <Group gap="xs" display={{ base: "none", sm: "flex" }}>
+          {/* Divisor */}
+          <Divider display={{ base: "none", md: "block" }} />
+
+          {/* Segunda Linha: Navegação */}
+          <Box display={{ base: "none", md: "block" }}>
+            <Group justify="center" gap="md">
               {headerLinks.map((link) => (
                 <Button
                   key={link.label}
@@ -117,37 +147,8 @@ export default function Header() {
                 </Button>
               ))}
             </Group>
-          </Flex>
-
-          {/* Burger Menu Mobile */}
-          <Box display={{ base: "block", sm: "none" }}>
-            <Burger
-              opened={opened}
-              onClick={toggle}
-              color={theme.colors.gray[7]}
-              size="sm"
-            />
           </Box>
-
-          {/* Espaço para Publicidade */}
-          <Box
-            miw={300}
-            mih={90}
-            display={{ base: "none", xl: "flex" }}
-            style={{
-              border: `${rem(2)} dashed ${theme.colors.gray[3]}`,
-              alignItems: "center",
-              justifyContent: "center",
-              flex: 1,
-              maxWidth: 728,
-              borderRadius: theme.radius.sm,
-            }}
-          >
-            <Text c="dimmed" size="sm" ta="center">
-              Publicidade
-            </Text>
-          </Box>
-        </Flex>
+        </Stack>
       </Container>
 
       {/* Drawer de Navegação Mobile */}
