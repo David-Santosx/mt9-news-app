@@ -25,6 +25,15 @@ const footerLinks = {
       { label: "Comércios", href: "/comercios" },
     ],
   },
+  about: {
+    title: "Sobre",
+    links: [
+      { label: "Sobre Nós", href: "/sobre" },
+      { label: "Contato", href: "/contato" },
+      { label: "Política de Privacidade", href: "/politica-privacidade" },
+      { label: "Termos de Uso", href: "/termos-uso" },
+    ],
+  },
 };
 
 export default function Footer() {
@@ -36,17 +45,23 @@ export default function Footer() {
           direction={{ base: "column", sm: "row" }}
           justify="space-between"
           align={{ base: "center", sm: "flex-start" }}
-          gap="xl"
+          gap={{ base: "xl", sm: "xl", md: "2rem" }}
           mb="xl"
+          wrap={{ base: "wrap", lg: "nowrap" }}
         >
-          <Box maw={400} className="sm:text-left text-center">
-            <Stack>
+          <Box
+            maw={{ base: "100%", md: 400 }}
+            w={{ base: "100%", md: "auto" }}
+            ta={{ base: "center", sm: "left" }}
+          >
+            <Stack gap="md">
               <Box className="flex justify-center sm:justify-start">
                 <Image
                   src="/images/mt9-logo.svg"
                   alt="MT9 News Logo"
                   width={120}
                   height={40}
+                  className="transition-transform duration-300 hover:scale-105"
                 />
               </Box>
               <Text size="sm" c="dark">
@@ -58,7 +73,11 @@ export default function Footer() {
           </Box>
 
           {/* Links de Mídia Social */}
-          <Group gap="md">
+          <Group
+            gap="md"
+            mt={{ base: 0, sm: "1rem" }}
+            className="sm:self-start self-center"
+          >
             <ActionIcon
               variant="subtle"
               color="dark"
@@ -66,6 +85,7 @@ export default function Footer() {
               href="https://facebook.com"
               target="_blank"
               size="lg"
+              className="transition-transform duration-200 hover:scale-110"
             >
               <Facebook size={24} />
             </ActionIcon>
@@ -76,6 +96,7 @@ export default function Footer() {
               href="https://instagram.com"
               target="_blank"
               size="lg"
+              className="transition-transform duration-200 hover:scale-110"
             >
               <Instagram size={24} />
             </ActionIcon>
@@ -85,61 +106,82 @@ export default function Footer() {
         <Divider my="xl" />
 
         {/* Seções de Links */}
-        <Flex
-          wrap="wrap"
-          gap={{ base: "xl", md: 50 }}
-          justify={{ base: "center", sm: "flex-start" }}
-          align="flex-start"
-        >
-          {Object.values(footerLinks).map((section) => (
-            <Stack key={section.title} maw={160}>
-              <Title order={3} size="h6">
-                {section.title}
-              </Title>
-              <Flex gap="xl">
-                {section.links.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    style={{
-                      color: "var(--mantine-color-dark)",
-                      textDecoration: "none",
-                      fontSize: "var(--mantine-font-size-sm)",
-                    }}
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-              </Flex>
-            </Stack>
-          ))}
-        </Flex>
+        <Box my="xl">
+          <Flex
+            wrap="wrap"
+            gap={{ base: "xl", md: 50 }}
+            justify={{ base: "flex-start", sm: "flex-start" }}
+            align="flex-start"
+          >
+            {Object.values(footerLinks).map((section) => (
+              <Box
+                key={section.title}
+                maw={{ base: "100%", xs: 160 }}
+                w={{ base: "100%", xs: "auto" }}
+                ta={{ base: "center", xs: "left" }}
+              >
+                <Title order={3} size="h6" mb="md">
+                  {section.title}
+                </Title>
+                <Stack gap="xs">
+                  {section.links.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      style={{
+                        color: "var(--mantine-color-dark)",
+                        textDecoration: "none",
+                        fontSize: "var(--mantine-font-size-sm)",
+                      }}
+                      className="hover:underline transition-colors duration-200"
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+                </Stack>
+              </Box>
+            ))}
+          </Flex>
+        </Box>
 
         <Divider my="xl" style={{ color: "var(--mantine-color-dark)" }} />
 
         {/* Copyright e Links Legais */}
         <Flex
-          direction={{ base: "column", sm: "row" }}
+          direction={{ base: "column", md: "row" }}
           justify="space-between"
-          align="center"
-          gap="md"
+          align={{ base: "center", md: "center" }}
+          gap={{ base: "xl", md: "md" }}
+          wrap="wrap"
         >
-          <Group gap="xs">
-            <Text size="xs" c="dark">
-              © {new Date().getFullYear()} MT9 News. Todos os direitos reservados.
+          <Group gap="xs" justify="center" wrap="wrap">
+            <Text size="xs" c="dark" ta={{ base: "center", md: "left" }}>
+              © {new Date().getFullYear()} MT9 News. Todos os direitos
+              reservados.
             </Text>
-            <Text size="sm" c="dark.4">•</Text>
-            <Text size="xs" c="dark">
-              Desenvolvido por <Link href="https://www.github.com/David-Santosx" target="_blank">David Santos</Link>
+            <Text size="xs" c="dark.4" display={{ base: "none", sm: "block" }}>
+              •
+            </Text>
+            <Text size="xs" c="dark" ta={{ base: "center", md: "left" }}>
+              Desenvolvido por{" "}
+              <Link
+                href="https://www.github.com/David-Santosx"
+                target="_blank"
+                className="hover:underline"
+                style={{ color: "#00adef" }}
+              >
+                David Santos
+              </Link>
             </Text>
           </Group>
-          <Group gap="md">
+          <Group gap="md" justify="center" wrap="wrap" mt={{ base: 0, md: 0 }}>
             <Link
               href="/politica-privacidade"
               style={{
                 color: "var(--mantine-color-dark)",
-                fontSize: "var(--mantine-font-size-sm)",
+                fontSize: "var(--mantine-font-size-xs)",
               }}
+              className="hover:underline transition-colors duration-200"
             >
               Política de Privacidade
             </Link>
@@ -147,8 +189,9 @@ export default function Footer() {
               href="/termos-uso"
               style={{
                 color: "var(--mantine-color-dark)",
-                fontSize: "var(--mantine-font-size-sm)",
+                fontSize: "var(--mantine-font-size-xs)",
               }}
+              className="hover:underline transition-colors duration-200"
             >
               Termos de Uso
             </Link>
@@ -156,8 +199,9 @@ export default function Footer() {
               href="/contato"
               style={{
                 color: "var(--mantine-color-dark)",
-                fontSize: "var(--mantine-font-size-sm)",
+                fontSize: "var(--mantine-font-size-xs)",
               }}
+              className="hover:underline transition-colors duration-200"
             >
               Contato
             </Link>
