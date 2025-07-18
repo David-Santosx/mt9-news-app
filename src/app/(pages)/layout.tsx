@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Header from "../components/header";
 import { Divider } from "@mantine/core";
+import Footer from "../components/footer";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -17,6 +18,7 @@ export default function RootLayout({
       <Header />
       <Divider my="md" />
       {children}
+      <Footer />
     </main>
   );
 }
