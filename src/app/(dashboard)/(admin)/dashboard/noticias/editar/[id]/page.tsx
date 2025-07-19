@@ -2,14 +2,13 @@ import EditNewsForm from "../../components/edit-news-form";
 import type { Metadata } from "next";
 
 interface EditNewsPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
-export async function generateMetadata({
-  params,
-}: EditNewsPageProps): Promise<Metadata> {
+export async function generateMetadata(props: EditNewsPageProps): Promise<Metadata> {
+  const params = await props.params;
   const { id } = params;
 
   return {
@@ -29,6 +28,7 @@ export async function generateMetadata({
   };
 }
 
-export default function EditNewsPage({ params }: EditNewsPageProps) {
+export default async function EditNewsPage(props: EditNewsPageProps) {
+  const params = await props.params;
   return <EditNewsForm newsId={params.id} />;
 }

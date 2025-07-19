@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@/../.prisma/client";
 import { uploadToS3 } from "@/services/upload-s3";
 import { headers } from "next/headers";
 import { isAdmin } from "@/lib/isAdmin";
 import { deleteFromS3, validateNewsFields } from "./utils";
+import { prisma } from "@/lib/prisma";
 
-const prisma = new PrismaClient();
 const BUCKET = process.env.S3_NEWS_BUCKET || "news-images";
 
 /**

@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@/../.prisma/client";
 import { headers } from "next/headers";
 import { isAdmin } from "@/lib/isAdmin";
 import { uploadToS3 } from "@/services/upload-s3";
 import { deleteFromS3, validateAdsFields } from "../utils";
+import { prisma } from "@/lib/prisma";
 
-const prisma = new PrismaClient();
 const BUCKET = "ads-images";
 
 /**
@@ -13,8 +12,9 @@ const BUCKET = "ads-images";
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  props: { params: Promise<{ id: string }> }
 ) {
+  const params = await props.params;
   try {
     const ads = await prisma.advertisement.findUnique({
       where: { id: params.id },
@@ -41,8 +41,9 @@ export async function GET(
  */
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  props: { params: Promise<{ id: string }> }
 ) {
+  const params = await props.params;
   const headersObj = await headers();
   if (!(await isAdmin(headersObj))) {
     return NextResponse.json({ error: "Acesso negado" }, { status: 403 });
@@ -90,7 +91,7 @@ export async function PATCH(
       );
     }
     const { campaing, startDate, endDate, link } = validationResult.data;
-      
+
     const updatedAds = await prisma.advertisement.update({
       where: { id: params.id },
       data: {
@@ -120,8 +121,9 @@ export async function PATCH(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  props: { params: Promise<{ id: string }> }
 ) {
+  const params = await props.params;
   const headersObj = await headers();
   if (!(await isAdmin(headersObj))) {
     return NextResponse.json({ error: "Acesso negado" }, { status: 403 });

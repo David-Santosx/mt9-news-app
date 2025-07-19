@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@/../.prisma/client";
 import { uploadToS3 } from "@/services/upload-s3";
 import { headers } from "next/headers";
 import { isAdmin } from "@/lib/isAdmin";
 import { deleteFromS3, validateAdsFields } from "./utils";
+import { prisma } from "@/lib/prisma";
 
-const prisma = new PrismaClient();
 const BUCKET = process.env.S3_ADS_BUCKET || "ads-images";
 
 /**
@@ -43,7 +42,8 @@ export async function POST(request: NextRequest) {
       if (!validationResult.data) {
         throw new Error("Dados de validação ausentes.");
       }
-      const { campaing, startDate, endDate, link, position } = validationResult.data;
+      const { campaing, startDate, endDate, link, position } =
+        validationResult.data;
 
       // Cria a publicidade no banco de dados
       const ads = await prisma.advertisement.create({
@@ -62,7 +62,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           error:
-            error instanceof Error ? error.message : "Erro ao criar publicidade",
+            error instanceof Error
+              ? error.message
+              : "Erro ao criar publicidade",
           details: error,
         },
         { status: 400 }

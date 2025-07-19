@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@/../.prisma/client";
 import { headers } from "next/headers";
 import { isAdmin } from "@/lib/isAdmin";
 import { uploadToS3 } from "@/services/upload-s3";
 import { deleteFromS3, validateNewsFields } from "../utils";
+import { prisma } from "@/lib/prisma";
 
-const prisma = new PrismaClient();
 const BUCKET = "news-images";
 
 /**
@@ -13,8 +12,9 @@ const BUCKET = "news-images";
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  props: { params: Promise<{ id: string }> }
 ) {
+  const params = await props.params;
   try {
     const news = await prisma.news.findUnique({
       where: { id: params.id },
@@ -41,8 +41,9 @@ export async function GET(
  */
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  props: { params: Promise<{ id: string }> }
 ) {
+  const params = await props.params;
   const headersObj = await headers();
   if (!(await isAdmin(headersObj))) {
     return NextResponse.json({ error: "Acesso negado" }, { status: 403 });
@@ -156,8 +157,9 @@ export async function PATCH(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  props: { params: Promise<{ id: string }> }
 ) {
+  const params = await props.params;
   const headersObj = await headers();
   if (!(await isAdmin(headersObj))) {
     return NextResponse.json({ error: "Acesso negado" }, { status: 403 });
