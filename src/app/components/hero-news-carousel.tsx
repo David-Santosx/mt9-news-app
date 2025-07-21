@@ -316,18 +316,18 @@ export default function HeroNewsCarousel() {
   const rightColumnNews = sideNews.slice(3, 6);
 
   return (
-    <Box bg="gray.0" py="xl" my="xl" style={{ borderRadius: '1rem' }}>
+    <Box bg="gray.0" py="xl" my="xl" style={{ borderRadius: "1rem" }}>
       <Container size="xl">
         <Stack gap="md" mb="xl" align="center">
-          <Title 
-            order={2} 
+          <Title
+            order={2}
             style={{
-              backgroundImage: 'linear-gradient(45deg, #00adef, #0066cc)',
-              backgroundClip: 'text',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
+              backgroundImage: "linear-gradient(45deg, #00adef, #0066cc)",
+              backgroundClip: "text",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
               fontWeight: 700,
-              fontSize: '2.25rem',
+              fontSize: "2.25rem",
             }}
           >
             Notícias em Destaque
@@ -336,44 +336,44 @@ export default function HeroNewsCarousel() {
             Fique por dentro das últimas notícias
           </Text>
         </Stack>
-        
+
         <Grid gutter="md">
           {/* Carousel Principal */}
           <Grid.Col span={{ base: 12, md: 8 }}>
-            <Box 
+            <Box
               h={400}
-              style={{ 
-                borderRadius: 'var(--mantine-radius-md)',
-                overflow: 'hidden',
-                boxShadow: '0 4px 20px rgba(0,0,0,0.1)'
+              style={{
+                borderRadius: "var(--mantine-radius-md)",
+                overflow: "hidden",
+                boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
               }}
             >
               <Carousel
                 withIndicators
                 withControls
                 plugins={[Autoplay({ delay: 4000 })]}
-                styles={(theme) => ({
-                  root: { height: '100%' },
-                  slide: { height: '100%' },
+                styles={() => ({
+                  root: { height: "100%" },
+                  slide: { height: "100%" },
                   indicator: {
-                    backgroundColor: 'rgba(255,255,255,0.5)',
+                    backgroundColor: "rgba(255,255,255,0.5)",
                     borderWidth: 2,
-                    borderStyle: 'solid',
-                    borderColor: 'transparent',
-                    transition: 'all 0.2s ease',
-                    '&[data-active]': {
-                      backgroundColor: 'white',
-                      borderColor: '#00adef',
+                    borderStyle: "solid",
+                    borderColor: "transparent",
+                    transition: "all 0.2s ease",
+                    "&[data-active]": {
+                      backgroundColor: "white",
+                      borderColor: "#00adef",
                     },
                   },
                   control: {
-                    backgroundColor: 'rgba(255,255,255,0.9)',
-                    border: 'none',
-                    color: '#00adef',
-                    transition: 'all 0.2s ease',
-                    '&:hover': {
-                      backgroundColor: 'white',
-                      transform: 'scale(1.05)',
+                    backgroundColor: "rgba(255,255,255,0.9)",
+                    border: "none",
+                    color: "#00adef",
+                    transition: "all 0.2s ease",
+                    "&:hover": {
+                      backgroundColor: "white",
+                      transform: "scale(1.05)",
                     },
                   },
                 })}
@@ -391,7 +391,7 @@ export default function HeroNewsCarousel() {
               </Carousel>
             </Box>
           </Grid.Col>
-          
+
           {/* Colunas Laterais */}
           <Grid.Col span={{ base: 12, md: 4 }}>
             <Grid gutter="sm">
@@ -399,23 +399,23 @@ export default function HeroNewsCarousel() {
               <Grid.Col span={{ base: 12, sm: 6, md: 12 }}>
                 <Stack gap="sm">
                   {leftColumnNews.map((newsItem) => (
-                    <NewsCard 
-                      key={newsItem.id} 
-                      news={newsItem} 
-                      variant="secondary" 
+                    <NewsCard
+                      key={newsItem.id}
+                      news={newsItem}
+                      variant="secondary"
                     />
                   ))}
                 </Stack>
               </Grid.Col>
-              
+
               {/* Segunda Coluna */}
               <Grid.Col span={{ base: 12, sm: 6, md: 12 }}>
                 <Stack gap="sm">
                   {rightColumnNews.map((newsItem) => (
-                    <NewsCard 
-                      key={newsItem.id} 
-                      news={newsItem} 
-                      variant="secondary" 
+                    <NewsCard
+                      key={newsItem.id}
+                      news={newsItem}
+                      variant="secondary"
                     />
                   ))}
                 </Stack>
