@@ -9,6 +9,7 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+
   minio:
     image: minio/minio:latest
     container_name: minio
@@ -22,8 +23,24 @@ services:
       - minio_data:/data
     command: server --console-address ":9001" /data
     restart: unless-stopped
+    networks:
+      - minio_network
+
+  # Container para configuração inicial do MinIO
+  minio_init:
+    build:
+      context: ./docker/minio
+      dockerfile: Dockerfile
+    depends_on:
+      - minio
+    networks:
+      - minio_network
 
 volumes:
   postgres_data:
     driver: local
   minio_data:
+
+networks:
+  minio_network:
+    driver: bridge
