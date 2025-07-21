@@ -146,61 +146,58 @@ function NewsCard({
         withBorder
         component={Link}
         href={`/noticias/${news.id}`}
-        h={120}
+        h={280}
         style={{ transition: "transform 0.2s ease, box-shadow 0.2s ease" }}
         styles={(theme) => ({
           root: {
             "&:hover": {
-              transform: "translateX(2px)",
-              boxShadow: theme.shadows.sm,
+              transform: "translateY(-4px)",
+              boxShadow: theme.shadows.md,
             },
+            display: "flex",
+            flexDirection: "column",
+            height: "100%",
           },
         })}
       >
-        <Group gap={0} wrap="nowrap" h="100%">
-          <Box
-            w={100}
-            h="100%"
-            style={{ overflow: "hidden", position: "relative" }}
-          >
-            {news.image ? (
-              <Image
-                src={news.image}
-                alt={news.title}
-                fit="cover"
-                w={100}
-                h="100%"
-                style={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  objectPosition: "center",
-                  objectFit: "cover",
-                }}
-              />
-            ) : (
-              <Center h="100%" bg="gray.2">
-                <Text size="xs" c="dimmed">
-                  Sem imagem
-                </Text>
-              </Center>
-            )}
-          </Box>
+        <Box h="60%" style={{ overflow: "hidden", position: "relative" }}>
+          {news.image ? (
+            <Image
+              src={news.image}
+              alt={news.title}
+              fit="cover"
+              h="100%"
+              w="100%"
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                objectPosition: "center",
+                objectFit: "cover",
+              }}
+            />
+          ) : (
+            <Center h="100%" bg="gray.2">
+              <Text size="xs" c="dimmed">
+                Sem imagem
+              </Text>
+            </Center>
+          )}
+        </Box>
 
-          <Box p="md" style={{ flex: 1 }}>
-            <Badge size="xs" variant="light" color="blue" mb={4}>
-              {news.category}
-            </Badge>
+        <Box p="md" style={{ flex: 1 }}>
+          <Badge size="xs" variant="light" color="blue" mb={4}>
+            {news.category}
+          </Badge>
 
-            <Text size="sm" fw={600} lineClamp={2} mb={4}>
-              {news.title}
-            </Text>
+          <Text size="sm" fw={600} lineClamp={2} mb={4}>
+            {news.title}
+          </Text>
 
-            <Text size="xs" c="dimmed">
-              {formatDate(news.publishedAt)}
-            </Text>
-          </Box>
-        </Group>
+          <Text size="xs" c="dimmed">
+            {formatDate(news.publishedAt)}
+          </Text>
+        </Box>
       </Card>
     );
   }
@@ -354,27 +351,25 @@ export default function HeroNewsCarousel() {
 
           <Grid gutter="md">
             <Grid.Col span={{ base: 12, md: 8 }}>
-              <Skeleton height={400} radius="md" />
+              <Skeleton height={500} radius="md" />
             </Grid.Col>
 
             <Grid.Col span={{ base: 12, md: 4 }}>
-              <Grid gutter="sm">
-                <Grid.Col span={6}>
-                  <Stack gap="sm">
-                    {[1, 2, 3].map((i) => (
-                      <Skeleton key={i} height={120} radius="md" />
-                    ))}
-                  </Stack>
-                </Grid.Col>
-                <Grid.Col span={6}>
-                  <Stack gap="sm">
-                    {[1, 2, 3].map((i) => (
-                      <Skeleton key={i} height={120} radius="md" />
-                    ))}
-                  </Stack>
-                </Grid.Col>
-              </Grid>
+              <Stack gap="md">
+                {[1, 2, 3].map((i) => (
+                  <Skeleton key={i} height={150} radius="md" />
+                ))}
+              </Stack>
             </Grid.Col>
+          </Grid>
+
+          {/* Skeletons para as notícias secundárias */}
+          <Grid mt="xl" gutter="md">
+            {[1, 2, 3].map((i) => (
+              <Grid.Col key={i} span={{ base: 12, xs: 6, sm: 4 }}>
+                <Skeleton height={180} radius="md" />
+              </Grid.Col>
+            ))}
           </Grid>
         </Container>
       </Box>
@@ -422,17 +417,15 @@ export default function HeroNewsCarousel() {
     );
   }
 
-  // Separar as notícias: 3 para o carousel principal, 6 para as colunas laterais
+  // Separar as notícias: 3 para o carousel principal, 6 para exibir abaixo do carousel
   const carouselNews = news.slice(0, 3);
   const sideNews = news.slice(3, 9);
-  const leftColumnNews = sideNews.slice(0, 3);
-  const rightColumnNews = sideNews.slice(3, 6);
 
   // Últimas notícias para o carousel múltiplo
   const latestNews = news.slice(9, 15); // Pegando até 6 notícias adicionais se disponíveis
 
   return (
-    <Box bg="gray.0" py="xl" my="xl" style={{ borderRadius: "1rem" }}>
+    <Box bg="gray.0" py="xl" mt="md" style={{ borderRadius: "1rem" }}>
       <Container size="xl">
         <Stack gap="md" mb="xl" align="center">
           <Title
@@ -455,10 +448,10 @@ export default function HeroNewsCarousel() {
         </Stack>
 
         <Grid gutter="md">
-          {/* Carousel Principal */}
+          {/* Carousel Principal - Lado esquerdo */}
           <Grid.Col span={{ base: 12, md: 8 }}>
             <Box
-              h={400}
+              h={500}
               style={{
                 borderRadius: "var(--mantine-radius-md)",
                 overflow: "hidden",
@@ -515,36 +508,93 @@ export default function HeroNewsCarousel() {
             </Box>
           </Grid.Col>
 
-          {/* Colunas Laterais */}
+          {/* Coluna de Notícias Lateral - Lado direito */}
           <Grid.Col span={{ base: 12, md: 4 }}>
-            <Grid gutter="sm">
-              {/* Primeira Coluna */}
-              <Grid.Col span={{ base: 12, sm: 6, md: 12 }}>
-                <Stack gap="sm">
-                  {leftColumnNews.map((newsItem) => (
-                    <NewsCard
-                      key={newsItem.id}
-                      news={newsItem}
-                      variant="secondary"
-                    />
-                  ))}
-                </Stack>
-              </Grid.Col>
-
-              {/* Segunda Coluna */}
-              <Grid.Col span={{ base: 12, sm: 6, md: 12 }}>
-                <Stack gap="sm">
-                  {rightColumnNews.map((newsItem) => (
-                    <NewsCard
-                      key={newsItem.id}
-                      news={newsItem}
-                      variant="secondary"
-                    />
-                  ))}
-                </Stack>
-              </Grid.Col>
-            </Grid>
+            <Stack gap="md">
+              {sideNews.slice(0, 3).map((newsItem) => (
+                <Card
+                  key={newsItem.id}
+                  shadow="sm"
+                  padding={0}
+                  radius="md"
+                  withBorder
+                  component={Link}
+                  href={`/noticias/${newsItem.id}`}
+                  style={{
+                    transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                    height: 155,
+                  }}
+                  styles={(theme) => ({
+                    root: {
+                      "&:hover": {
+                        transform: "translateX(2px)",
+                        boxShadow: theme.shadows.sm,
+                      },
+                    },
+                  })}
+                >
+                  <Group gap={0} wrap="nowrap" h="100%">
+                    <Box
+                      w={100}
+                      h="100%"
+                      style={{ overflow: "hidden", position: "relative" }}
+                    >
+                      {newsItem.image ? (
+                        <Image
+                          src={newsItem.image}
+                          alt={newsItem.title}
+                          fit="cover"
+                          w={100}
+                          h="100%"
+                          style={{
+                            position: "absolute",
+                            top: 0,
+                            left: 0,
+                            objectPosition: "center",
+                            objectFit: "cover",
+                          }}
+                        />
+                      ) : (
+                        <Center h="100%" bg="gray.2">
+                          <Text size="xs" c="dimmed">
+                            Sem imagem
+                          </Text>
+                        </Center>
+                      )}
+                    </Box>
+                    <Box p="md" style={{ flex: 1 }}>
+                      <Badge size="xs" variant="light" color="blue" mb={4}>
+                        {newsItem.category}
+                      </Badge>
+                      <Text size="sm" fw={600} lineClamp={2} mb={4}>
+                        {newsItem.title}
+                      </Text>
+                      <Text size="xs" c="dimmed">
+                        {new Date(newsItem.publishedAt).toLocaleDateString(
+                          "pt-BR",
+                          {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                          }
+                        )}
+                      </Text>
+                    </Box>
+                  </Group>
+                </Card>
+              ))}
+            </Stack>
           </Grid.Col>
+        </Grid>
+
+        {/* Notícias Secundárias - Abaixo do Carousel */}
+        <Grid mt="xl" gutter="md">
+          {/* Distribui as notícias secundárias horizontalmente */}
+          {sideNews.slice(3).map((newsItem) => (
+            <Grid.Col key={newsItem.id} span={{ base: 12, xs: 6, sm: 4 }}>
+              <NewsCard news={newsItem} variant="secondary" />
+            </Grid.Col>
+          ))}
         </Grid>
 
         {/* Carousel múltiplo */}
