@@ -2,14 +2,13 @@ import EditAdsForm from "../../components/edit-ads-form";
 import type { Metadata } from "next";
 
 interface EditAdsPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
-export async function generateMetadata({
-  params,
-}: EditAdsPageProps): Promise<Metadata> {
+export async function generateMetadata(props: EditAdsPageProps): Promise<Metadata> {
+  const params = await props.params;
   const { id } = params;
 
   return {
@@ -29,6 +28,7 @@ export async function generateMetadata({
   };
 }
 
-export default function EditAdsPage({ params }: EditAdsPageProps) {
+export default async function EditAdsPage(props: EditAdsPageProps) {
+  const params = await props.params;
   return <EditAdsForm adsId={params.id} />;
 }

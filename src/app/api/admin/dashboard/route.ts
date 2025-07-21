@@ -1,9 +1,7 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@/generated/prisma";
 import { headers } from "next/headers";
 import { isAdmin } from "@/lib/isAdmin";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma";
 
 export async function GET() {
   const headersObj = await headers();
@@ -35,10 +33,10 @@ export async function GET() {
     });
   } catch (error) {
     console.error("Erro ao buscar dados do dashboard:", error);
-    const errorMessage = error instanceof Error ? error.message : "Erro ao buscar dados do dashboard";
-    return NextResponse.json(
-      { error: errorMessage },
-      { status: 500 }
-    );
+    const errorMessage =
+      error instanceof Error
+        ? error.message
+        : "Erro ao buscar dados do dashboard";
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
