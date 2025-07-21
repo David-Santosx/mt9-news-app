@@ -1,12 +1,15 @@
 import { Container } from "@mantine/core";
+import HeroNewsCarousel from "@/app/components/hero-news-carousel";
 
 export default function Page() {
   return (
-    <Container>
-      <h1 className="text-3xl font-bold underline">Hello, Mantine!</h1>
-      <p className="mt-4 text-lg">
-        This is a simple page using Mantine UI components and Tailwind CSS.
-      </p>
-    </Container>
+    <>
+      {/* Seção Hero com Carousel de Notícias */}
+      <HeroNewsCarousel />
+      
+      <Container>
+        {/* Conteúdo adicional da página pode ser adicionado aqui */}
+      </Container>
+    </>
   );
 }
