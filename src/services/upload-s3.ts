@@ -23,5 +23,5 @@ export async function uploadToS3(file: File, bucket: string): Promise<string> {
     ContentType: file.type,
   }));
 
-  return `http://localhost:9000/${bucket}/${filename}`;
+  return `${process.env.S3_ENDPOINT}/${bucket}/${filename}`;
 }
