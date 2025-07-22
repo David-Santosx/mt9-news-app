@@ -13,6 +13,6 @@ export const auth = betterAuth({
     emailAndPassword: {
         enabled: true,
     },
-    appName: "mt9-news-app",
+    appName: "MT9 Notícias e Comércios",
     plugins: [admin(), nextCookies()],
 });
