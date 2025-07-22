@@ -22,6 +22,7 @@ const footerLinks = {
       { label: "Política", href: "/politica" },
       { label: "Esportes", href: "/esportes" },
       { label: "Cultura", href: "/cultura" },
+      { label: "Tecnologia", href: "/tecnologia" },
       { label: "Comércios", href: "/comercios" },
     ],
   },

@@ -18,12 +18,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { Facebook, Instagram, X } from "lucide-react";
 import { useDisclosure } from "@mantine/hooks";
+import AdDisplay, { AdPosition } from "./ad-display";
 
 const headerLinks = [
   { label: "Geral", href: "/geral" },
   { label: "Política", href: "/politica" },
   { label: "Esportes", href: "/esportes" },
   { label: "Cultura", href: "/cultura" },
+  { label: "Tecnologia", href: "/tecnologia" },
   { label: "Comércios", href: "/comercios" },
 ];
 
@@ -101,21 +103,7 @@ export default function Header() {
               display={{ base: "none", md: "block" }}
               style={{ flex: 1, maxWidth: 728 }}
             >
-              <Box
-                mih={90}
-                w="100%"
-                style={{
-                  border: `${rem(2)} dashed ${theme.colors.gray[3]}`,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  borderRadius: theme.radius.sm,
-                }}
-              >
-                <Text c="dimmed" size="sm" ta="center">
-                  728x90
-                </Text>
-              </Box>
+              <AdDisplay position={AdPosition.HEADER} width={728} height={90} />
             </Box>
           </Flex>
 
