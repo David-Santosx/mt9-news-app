@@ -4,6 +4,7 @@ import { isAdmin } from "@/lib/isAdmin";
 import { uploadToS3 } from "@/services/upload-s3";
 import { deleteFromS3, validateNewsFields } from "../utils";
 import { prisma } from "@/lib/prisma";
+import { corsHeaders } from "../../../cors";
 
 const BUCKET = "news-images";
 
@@ -21,17 +22,17 @@ export async function GET(
     });
 
     if (!news) {
-      return NextResponse.json(
-        { error: "Notícia não encontrada" },
-        { status: 404 }
+      return corsHeaders(
+        request,
+        NextResponse.json({ error: "Notícia não encontrada" }, { status: 404 })
       );
     }
 
-    return NextResponse.json({ news });
+    return corsHeaders(request, NextResponse.json({ news }));
   } catch {
-    return NextResponse.json(
-      { error: "Erro ao buscar notícia" },
-      { status: 500 }
+    return corsHeaders(
+      request,
+      NextResponse.json({ error: "Erro ao buscar notícia" }, { status: 500 })
     );
   }
 }
@@ -46,7 +47,10 @@ export async function PATCH(
   const params = await props.params;
   const headersObj = await headers();
   if (!(await isAdmin(headersObj))) {
-    return NextResponse.json({ error: "Acesso negado" }, { status: 403 });
+    return corsHeaders(
+      request,
+      NextResponse.json({ error: "Acesso negado" }, { status: 403 })
+    );
   }
 
   try {
@@ -56,18 +60,18 @@ export async function PATCH(
     });
 
     if (!news) {
-      return NextResponse.json(
-        { error: "Notícia não encontrada" },
-        { status: 404 }
+      return corsHeaders(
+        request,
+        NextResponse.json({ error: "Notícia não encontrada" }, { status: 404 })
       );
     }
 
     // Valida campos do formulário
     const validationResult = validateNewsFields(formData);
     if (!validationResult.success) {
-      return NextResponse.json(
-        { error: validationResult.error },
-        { status: 400 }
+      return corsHeaders(
+        request,
+        NextResponse.json({ error: validationResult.error }, { status: 400 })
       );
     }
 
@@ -139,15 +143,18 @@ export async function PATCH(
       },
     });
 
-    return NextResponse.json({
-      msg: "Notícia atualizada com sucesso",
-      news: updatedNews,
-    });
+    return corsHeaders(
+      request,
+      NextResponse.json({
+        msg: "Notícia atualizada com sucesso",
+        news: updatedNews,
+      })
+    );
   } catch (error) {
     console.error("Erro ao atualizar notícia:", error);
-    return NextResponse.json(
-      { error: "Erro ao atualizar notícia" },
-      { status: 400 }
+    return corsHeaders(
+      request,
+      NextResponse.json({ error: "Erro ao atualizar notícia" }, { status: 400 })
     );
   }
 }
@@ -162,7 +169,10 @@ export async function DELETE(
   const params = await props.params;
   const headersObj = await headers();
   if (!(await isAdmin(headersObj))) {
-    return NextResponse.json({ error: "Acesso negado" }, { status: 403 });
+    return corsHeaders(
+      request,
+      NextResponse.json({ error: "Acesso negado" }, { status: 403 })
+    );
   }
 
   try {
@@ -171,9 +181,9 @@ export async function DELETE(
     });
 
     if (!news) {
-      return NextResponse.json(
-        { error: "Notícia não encontrada" },
-        { status: 404 }
+      return corsHeaders(
+        request,
+        NextResponse.json({ error: "Notícia não encontrada" }, { status: 404 })
       );
     }
 
@@ -186,12 +196,15 @@ export async function DELETE(
       where: { id: params.id },
     });
 
-    return NextResponse.json({ msg: "Notícia removida com sucesso" });
+    return corsHeaders(
+      request,
+      NextResponse.json({ msg: "Notícia removida com sucesso" })
+    );
   } catch (error) {
     console.error("Erro ao remover notícia:", error);
-    return NextResponse.json(
-      { error: "Erro ao remover notícia" },
-      { status: 500 }
+    return corsHeaders(
+      request,
+      NextResponse.json({ error: "Erro ao remover notícia" }, { status: 500 })
     );
   }
 }

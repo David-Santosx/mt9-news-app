@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { isAdmin } from "@/lib/isAdmin";
 import { deleteFromS3, validateNewsFields } from "./utils";
 import { prisma } from "@/lib/prisma";
+import { corsHeaders } from "../../cors";
 
 const BUCKET = process.env.S3_NEWS_BUCKET || "news-images";
 
@@ -13,7 +14,10 @@ const BUCKET = process.env.S3_NEWS_BUCKET || "news-images";
 export async function POST(request: NextRequest) {
   const headersObj = await headers();
   if (!(await isAdmin(headersObj))) {
-    return NextResponse.json({ error: "Acesso negado" }, { status: 403 });
+    return corsHeaders(
+      request,
+      NextResponse.json({ error: "Acesso negado" }, { status: 403 })
+    );
   }
   try {
     const formData = await request.formData();
@@ -94,23 +98,32 @@ export async function POST(request: NextRequest) {
           createdAt: new Date(),
         },
       });
-      return NextResponse.json({ msg: "Notícia criada com sucesso", news });
+      return corsHeaders(
+        request,
+        NextResponse.json({ msg: "Notícia criada com sucesso", news })
+      );
     } catch (error) {
       console.error("Erro detalhado:", error);
-      return NextResponse.json(
-        {
-          error:
-            error instanceof Error ? error.message : "Erro ao criar notícia",
-          details: error,
-        },
-        { status: 400 }
+      return corsHeaders(
+        request,
+        NextResponse.json(
+          {
+            error:
+              error instanceof Error ? error.message : "Erro ao criar notícia",
+            details: error,
+          },
+          { status: 400 }
+        )
       );
     }
   } catch (error) {
     console.error("Erro ao processar requisição:", error);
-    return NextResponse.json(
-      { error: "Erro interno ao criar notícia" },
-      { status: 500 }
+    return corsHeaders(
+      request,
+      NextResponse.json(
+        { error: "Erro interno ao criar notícia" },
+        { status: 500 }
+      )
     );
   }
 }
@@ -118,16 +131,16 @@ export async function POST(request: NextRequest) {
 /**
  * Lista todas as notícias (GET público)
  */
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     const news = await prisma.news.findMany({
       orderBy: { publishedAt: "desc" },
     });
-    return NextResponse.json({ news });
+    return corsHeaders(request, NextResponse.json({ news }));
   } catch {
-    return NextResponse.json(
-      { error: "Erro ao buscar notícias" },
-      { status: 500 }
+    return corsHeaders(
+      request,
+      NextResponse.json({ error: "Erro ao buscar notícias" }, { status: 500 })
     );
   }
 }
@@ -138,16 +151,19 @@ export async function GET() {
 export async function DELETE(request: NextRequest) {
   const headersObj = await headers();
   if (!(await isAdmin(headersObj))) {
-    return NextResponse.json({ error: "Acesso negado" }, { status: 403 });
+    return corsHeaders(
+      request,
+      NextResponse.json({ error: "Acesso negado" }, { status: 403 })
+    );
   }
   try {
     const { id } = await request.json();
     // Busca notícia
     const news = await prisma.news.findUnique({ where: { id } });
     if (!news) {
-      return NextResponse.json(
-        { error: "Notícia não encontrada" },
-        { status: 404 }
+      return corsHeaders(
+        request,
+        NextResponse.json({ error: "Notícia não encontrada" }, { status: 404 })
       );
     }
     // Remove imagem do storage se existir
@@ -155,11 +171,14 @@ export async function DELETE(request: NextRequest) {
       await deleteFromS3(news.image, BUCKET);
     }
     await prisma.news.delete({ where: { id } });
-    return NextResponse.json({ msg: "Notícia deletada com sucesso" });
+    return corsHeaders(
+      request,
+      NextResponse.json({ msg: "Notícia deletada com sucesso" })
+    );
   } catch {
-    return NextResponse.json(
-      { error: "Erro ao deletar notícia" },
-      { status: 400 }
+    return corsHeaders(
+      request,
+      NextResponse.json({ error: "Erro ao deletar notícia" }, { status: 400 })
     );
   }
 }

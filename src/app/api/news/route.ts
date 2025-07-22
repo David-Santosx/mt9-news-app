@@ -1,5 +1,6 @@
 import { NextResponse, NextRequest } from "next/server";
 import { getPaginatedNews } from "@/services/news-service";
+import { corsHeaders } from "../cors";
 
 // Definir explicitamente o runtime como Node.js para garantir que este código seja executado no servidor
 export const runtime = "nodejs";
@@ -16,19 +17,25 @@ export async function GET(request: NextRequest) {
     // Usar a função unificada para buscar notícias com ou sem categoria
     const result = await getPaginatedNews(category || undefined, limit, skip);
 
-    return NextResponse.json({
-      success: true,
-      news: result.news,
-      hasMore: result.hasMore,
-    });
+    return corsHeaders(
+      request,
+      NextResponse.json({
+        success: true,
+        news: result.news,
+        hasMore: result.hasMore,
+      })
+    );
   } catch (error) {
     console.error("Erro ao buscar notícias:", error);
-    return NextResponse.json(
-      {
-        success: false,
-        error: "Erro interno ao buscar notícias",
-      },
-      { status: 500 }
+    return corsHeaders(
+      request,
+      NextResponse.json(
+        {
+          success: false,
+          error: "Erro interno ao buscar notícias",
+        },
+        { status: 500 }
+      )
     );
   }
 }
