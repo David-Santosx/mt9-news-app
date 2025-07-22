@@ -22,7 +22,7 @@ const NEWS_PER_PAGE = 9;
 // Componente para o card de notícia
 function NewsCard({ item }: { item: NewsItem }) {
   return (
-    <Link href={`/noticia/${item.id}`} style={{ textDecoration: 'none', height: '100%' }}>
+    <Link href={`/noticias/${item.id}`} style={{ textDecoration: 'none', height: '100%' }}>
       <Card 
         shadow="sm" 
         padding="lg" 

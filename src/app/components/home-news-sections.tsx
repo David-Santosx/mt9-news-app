@@ -70,15 +70,15 @@ function CategorySection({ category, isRightAligned = false }: { category: strin
     <Box my="xl">
       <Container size="xl">
         {/* Título da categoria com linha decorativa */}
-        <Flex 
-          align="center" 
+        <Flex
+          align="center"
           mb="md"
           direction={isRightAligned ? "row-reverse" : "row"}
         >
           {loading ? (
             <>
               <Skeleton height={30} width={150} radius="md" />
-              <Skeleton 
+              <Skeleton
                 ml={isRightAligned ? undefined : "md"}
                 mr={isRightAligned ? "md" : undefined}
                 style={{ flex: 1 }}
@@ -91,15 +91,15 @@ function CategorySection({ category, isRightAligned = false }: { category: strin
               <Title order={2} size="h3" fw={700}>
                 {category.toUpperCase()}
               </Title>
-              <Box 
+              <Box
                 ml={isRightAligned ? undefined : "md"}
                 mr={isRightAligned ? "md" : undefined}
-                style={{ 
-                  flex: 1, 
-                  height: 4, 
-                  backgroundColor: "black", 
-                  borderRadius: 2 
-                }} 
+                style={{
+                  flex: 1,
+                  height: 4,
+                  backgroundColor: "black",
+                  borderRadius: 2,
+                }}
               />
             </>
           )}
@@ -107,92 +107,94 @@ function CategorySection({ category, isRightAligned = false }: { category: strin
 
         {/* Grid de notícias */}
         <Grid>
-          {loading ? (
-            // Skeleton durante o carregamento
-            Array(3).fill(0).map((_, index) => (
-              <Grid.Col span={{ base: 12, sm: 6, md: 4 }} key={`loading-${index}`}>
-                <Card shadow="sm" padding="lg" radius="md" withBorder>
-                  <Card.Section>
-                    <Skeleton height={200} radius={0} animate={true} />
-                  </Card.Section>
-                  <Group mt="md">
-                    <Skeleton height={14} width={80} radius="xl" />
-                    <Skeleton height={14} width={100} radius="xl" />
-                  </Group>
-                  <Skeleton height={22} mt="sm" width="90%" radius="xl" />
-                  <Skeleton height={22} mt={4} width="40%" radius="xl" />
-                  <Skeleton height={16} mt="xs" width="80%" radius="xl" />
-                </Card>
-              </Grid.Col>
-            ))
-          ) : (
-            // Notícias reais
-            news.map((item) => (
-              <Grid.Col span={{ base: 12, sm: 6, md: 4 }} key={item.id}>
-                <Link 
-                  href={`/noticia/${item.id}`} 
-                  style={{ 
-                    textDecoration: "none", 
-                    color: "inherit",
-                    display: "block" 
-                  }}
-                >
-                  <Card 
-                    shadow="sm" 
-                    padding="lg" 
-                    radius="md" 
-                    withBorder
-                    style={{
-                      transition: "transform 0.2s ease, box-shadow 0.2s ease",
-                      height: "100%"
-                    }}
-                    className="hover:shadow-lg hover:-translate-y-1"
+          {loading
+            ? // Skeleton durante o carregamento
+              Array(3)
+                .fill(0)
+                .map((_, index) => (
+                  <Grid.Col
+                    span={{ base: 12, sm: 6, md: 4 }}
+                    key={`loading-${index}`}
                   >
-                    <Card.Section>
-                      <Box style={{ position: "relative", height: 200 }}>
-                        <Image 
-                          src={item.image || "/images/placeholder.jpg"} 
-                          alt={item.title}
-                          fill
-                          sizes="(max-width: 768px) 100vw, 33vw"
-                          style={{ objectFit: "cover" }}
-                        />
-                      </Box>
-                    </Card.Section>
-                    <Group mt="md">
-                      <Text size="xs" c="dimmed">
-                        {new Date(item.publishedAt).toLocaleDateString('pt-BR')}
+                    <Card shadow="sm" padding="lg" radius="md" withBorder>
+                      <Card.Section>
+                        <Skeleton height={200} radius={0} animate={true} />
+                      </Card.Section>
+                      <Group mt="md">
+                        <Skeleton height={14} width={80} radius="xl" />
+                        <Skeleton height={14} width={100} radius="xl" />
+                      </Group>
+                      <Skeleton height={22} mt="sm" width="90%" radius="xl" />
+                      <Skeleton height={22} mt={4} width="40%" radius="xl" />
+                      <Skeleton height={16} mt="xs" width="80%" radius="xl" />
+                    </Card>
+                  </Grid.Col>
+                ))
+            : // Notícias reais
+              news.map((item) => (
+                <Grid.Col span={{ base: 12, sm: 6, md: 4 }} key={item.id}>
+                  <Link
+                    href={`/noticias/${item.id}`}
+                    style={{
+                      textDecoration: "none",
+                      color: "inherit",
+                      display: "block",
+                    }}
+                  >
+                    <Card
+                      shadow="sm"
+                      padding="lg"
+                      radius="md"
+                      withBorder
+                      style={{
+                        transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                        height: "100%",
+                      }}
+                      className="hover:shadow-lg hover:-translate-y-1"
+                    >
+                      <Card.Section>
+                        <Box style={{ position: "relative", height: 200 }}>
+                          <Image
+                            src={item.image || "/images/placeholder.jpg"}
+                            alt={item.title}
+                            fill
+                            sizes="(max-width: 768px) 100vw, 33vw"
+                            style={{ objectFit: "cover" }}
+                          />
+                        </Box>
+                      </Card.Section>
+                      <Group mt="md">
+                        <Text size="xs" c="dimmed">
+                          {new Date(item.publishedAt).toLocaleDateString(
+                            "pt-BR"
+                          )}
+                        </Text>
+                        <Text size="xs" c="dimmed">
+                          {item.publisher}
+                        </Text>
+                      </Group>
+                      <Text mt="sm" fw={700} lineClamp={2}>
+                        {item.title}
                       </Text>
-                      <Text size="xs" c="dimmed">
-                        {item.publisher}
-                      </Text>
-                    </Group>
-                    <Text mt="sm" fw={700} lineClamp={2}>
-                      {item.title}
-                    </Text>
-                    {item.subtitle && (
-                      <Text size="sm" c="dimmed" lineClamp={2} mt="xs">
-                        {item.subtitle}
-                      </Text>
-                    )}
-                  </Card>
-                </Link>
-              </Grid.Col>
-            ))
-          )}
+                      {item.subtitle && (
+                        <Text size="sm" c="dimmed" lineClamp={2} mt="xs">
+                          {item.subtitle}
+                        </Text>
+                      )}
+                    </Card>
+                  </Link>
+                </Grid.Col>
+              ))}
         </Grid>
 
         {/* Ver mais link */}
-        <Flex 
-          justify={isRightAligned ? "flex-end" : "flex-start"} 
-          mt="md"
-        >
+        <Flex justify={isRightAligned ? "flex-end" : "flex-start"} mt="md">
           {loading ? (
             <Skeleton height={24} width={200} radius="xl" />
           ) : (
-            <Anchor 
-              component={Link} 
-              href={`/${category.toLowerCase()}`} 
+            <Anchor
+              component={Link}
+              href={`/${category.toLowerCase()}`}
               fw={500}
               size="sm"
             >

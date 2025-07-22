@@ -1,1 +1,126 @@
 @import "tailwindcss";
+
+/* Estilos para o conteúdo das notícias */
+/* Estilo para parágrafos de notícias */
+.news-paragraph {
+  margin-bottom: 1em;
+  line-height: 1.3;
+  font-size: 1.125rem;
+  color: #333;
+}
+
+/* Manter alguns estilos gerais para a área de conteúdo */
+.news-content {
+  color: inherit;
+  letter-spacing: -0.003em;
+}
+
+.prose ul,
+.prose ol {
+  margin-top: 1.5em;
+  margin-bottom: 1.5em;
+  padding-left: 1.5em;
+}
+
+.prose li {
+  margin-bottom: 0.75em;
+  padding-left: 0.5em;
+}
+
+.prose li::marker {
+  color: #0074d9;
+}
+
+.prose img {
+  margin: 2em auto;
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  display: block;
+}
+
+.prose blockquote {
+  margin: 2em 0;
+  padding: 1.5em 2em;
+  background-color: #f9f9f9;
+  border-left: 4px solid #0074d9;
+  font-style: italic;
+  border-radius: 0 4px 4px 0;
+  position: relative;
+}
+
+.prose blockquote::before {
+  content: '"';
+  font-size: 3em;
+  position: absolute;
+  left: 10px;
+  top: -10px;
+  color: rgba(0, 116, 217, 0.2);
+  font-family: Georgia, serif;
+}
+
+.prose a {
+  color: #0074d9;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(0, 116, 217, 0.3);
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.prose a:hover {
+  color: #0058a6;
+  border-bottom-color: #0058a6;
+}
+
+.prose table {
+  width: 100%;
+  margin: 2em 0;
+  border-collapse: collapse;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.prose table td,
+.prose table th {
+  padding: 0.75em 1em;
+  border: 1px solid #e5e5e5;
+}
+
+.prose table th {
+  background-color: #f0f7ff;
+  font-weight: 600;
+  color: #333;
+  text-align: left;
+}
+
+.prose table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.prose table tr:hover {
+  background-color: #f0f0f0;
+}
+
+/* Estilos para elementos importantes */
+.prose strong {
+  font-weight: 700;
+  color: #333;
+}
+
+.prose em {
+  font-style: italic;
+  color: #555;
+}
+
+/* Estilos para destaques */
+.prose mark {
+  background-color: #fff7d6;
+  padding: 2px 4px;
+  border-radius: 2px;
+}
+
+/* Espaçamento entre parágrafos */
+.prose p + p {
+  margin-top: -0.75em;
+}
