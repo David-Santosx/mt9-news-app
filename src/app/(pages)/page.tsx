@@ -14,7 +14,7 @@ export async function generateMetadata(): Promise<Metadata> {
         "Portal de notícias atualizado com as últimas informações do estado do Mato Grosso.",
       images: [
         {
-          url: "/images/mt9-logo.svg",
+          url: "/images/og-image.jpg",
           width: 500,
           height: 500,
           alt: "MT9 Notícias - Portal de notícias",
