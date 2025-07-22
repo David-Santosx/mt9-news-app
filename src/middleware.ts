@@ -1,56 +1,50 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSessionCookie } from "better-auth/cookies";
 
-// Lista de origens permitidas
 const allowedOrigins = [
-  'https://www.mt9.com.br',
   'https://mt9.com.br',
-  // Adicione aqui outras origens que você quer permitir
-  // Por exemplo, para desenvolvimento local:
+  'https://www.mt9.com.br',
   'http://localhost:3000'
 ];
-
-// Função para configurar os headers CORS
-function setCorsHeaders(response: NextResponse, request?: NextRequest) {
-  // Se tivermos o request, pegamos a origem dele
-  const requestOrigin = request?.headers.get('origin');
-  
-  // Se a origem do request estiver na lista de permitidas, usamos ela
-  // Caso contrário, usamos a primeira origem permitida como padrão
-  const origin = requestOrigin && allowedOrigins.includes(requestOrigin)
-    ? requestOrigin
-    : allowedOrigins[0];
-
-  response.headers.set('Access-Control-Allow-Origin', origin);
-  response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-CSRF-Token');
-  response.headers.set('Access-Control-Allow-Credentials', 'true');
-  response.headers.set('Access-Control-Max-Age', '86400'); // 24 horas
-  
-  return response;
-}
  
 export default async function middleware(request: NextRequest) {
-  // Handle CORS preflight requests
-  if (request.method === "OPTIONS") {
-    const response = new NextResponse(null, { status: 204 });
-    setCorsHeaders(response, request);
+  const origin = request.headers.get('origin');
+  const sessionCookie = getSessionCookie(request);
+
+  // Handle preflight requests (OPTIONS)
+  if (request.method === 'OPTIONS') {
+    const response = new NextResponse(null, {
+      status: 204,
+      headers: {
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
+        'Access-Control-Max-Age': '86400', // 24 hours
+      },
+    });
+
+    // Set CORS headers for preflight
+    if (origin && allowedOrigins.includes(origin)) {
+      response.headers.set('Access-Control-Allow-Origin', origin);
+      response.headers.set('Access-Control-Allow-Credentials', 'true');
+    }
+
     return response;
   }
 
-  // Admin route authentication
-  if (request.nextUrl.pathname.startsWith("/admin")) {
-    const sessionCookie = getSessionCookie(request);
-    if (!sessionCookie) {
-      return NextResponse.redirect(new URL("/admin/auth", request.url));
-    }
+  if (!sessionCookie) {
+    return NextResponse.redirect(new URL("/admin/auth", request.url));
   }
 
   // Add security headers for SEO and security
   const response = NextResponse.next();
-  setCorsHeaders(response, request);
 
-  // Security headers
+  // Set CORS headers for actual requests
+  if (origin && allowedOrigins.includes(origin)) {
+    response.headers.set('Access-Control-Allow-Origin', origin);
+    response.headers.set('Access-Control-Allow-Credentials', 'true');
+  }
+
+  // Security headers that also help with SEO
   response.headers.set("X-Frame-Options", "DENY");
   response.headers.set("X-Content-Type-Options", "nosniff");
   response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
@@ -73,5 +67,8 @@ export default async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*"],
+  matcher: [
+    "/dashboard/:path*",
+    "/api/admin/:path*"
+  ],
 };
