@@ -2,11 +2,12 @@ import { Metadata } from "next";
 import { getNewsById } from "@/services/news-service";
 
 // Gerar metadados dinâmicos para cada notícia
-export async function generateMetadata({
-  params,
-}: {
-  params: { id: string };
-}): Promise<Metadata> {
+export async function generateMetadata(
+  props: {
+    params: Promise<{ id: string }>;
+  }
+): Promise<Metadata> {
+  const params = await props.params;
   try {
     const id = params.id;
     const news = await getNewsById(id);

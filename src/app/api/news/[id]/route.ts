@@ -4,10 +4,8 @@ import { getNewsById } from "@/services/news-service";
 // Definir explicitamente o runtime como Node.js para garantir que este código seja executado no servidor
 export const runtime = "nodejs";
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     const id = params.id;
     if (!id) {
