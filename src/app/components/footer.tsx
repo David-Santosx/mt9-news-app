@@ -1,17 +1,20 @@
 import {
   Box,
   Container,
-  Flex,
+  Grid,
   Group,
   Stack,
   Text,
   Title,
   Divider,
   ActionIcon,
+  Anchor,
+  Flex,
+  GridCol,
 } from "@mantine/core";
 import Image from "next/image";
 import Link from "next/link";
-import { Facebook, Instagram } from "lucide-react";
+import { Instagram } from "lucide-react";
 
 // Links estruturados por categoria
 const footerLinks = {
@@ -39,24 +42,16 @@ const footerLinks = {
 
 export default function Footer() {
   return (
-    <Box component="footer" bd={"1px 0px 0px 0px solid"} c="dark">
+    <Box component="footer" bg="gray.0" mt="xl">
       <Container size="xl" py="xl">
-        {/* Logo e Descrição */}
-        <Flex
-          direction={{ base: "column", sm: "row" }}
-          justify="space-between"
-          align={{ base: "center", sm: "flex-start" }}
-          gap={{ base: "xl", sm: "xl", md: "2rem" }}
-          mb="xl"
-          wrap={{ base: "wrap", lg: "nowrap" }}
-        >
-          <Box
-            maw={{ base: "100%", md: 400 }}
-            w={{ base: "100%", md: "auto" }}
-            ta={{ base: "center", sm: "left" }}
-          >
+        <Grid gutter={{ base: "xl", md: 50 }}>
+          {/* Coluna da Esquerda: Logo, Descrição e Social */}
+          <GridCol span={{ base: 12, md: 4 }}>
             <Stack gap="md">
-              <Box className="flex justify-center sm:justify-start">
+              <Link
+                href="/"
+                style={{ display: "inline-block", width: "fit-content" }}
+              >
                 <Image
                   src="/images/mt9-logo.svg"
                   alt="MT9 News Logo"
@@ -64,148 +59,105 @@ export default function Footer() {
                   height={40}
                   className="transition-transform duration-300 hover:scale-105"
                 />
-              </Box>
-              <Text size="sm" c="dark">
-                MT9 News é seu portal de notícias com informações atualizadas e
-                confiáveis sobre os principais acontecimentos no Brasil e no
-                mundo.
+              </Link>
+              <Text size="sm" c="dimmed">
+                Seu portal de notícias com informações atualizadas e confiáveis
+                sobre os principais acontecimentos em Mato Grosso, no Brasil e
+                no mundo.
               </Text>
+              <Group mt="xs" align="center">
+                <ActionIcon
+                  variant="subtle"
+                  color="blue"
+                  component="a"
+                  href="https://www.instagram.com/mt9.com.br/"
+                  target="_blank"
+                  size="lg"
+                  aria-label="Instagram"
+                  className="transition-transform duration-200 hover:scale-110"
+                >
+                  <Instagram size={20} />
+                </ActionIcon>
+                <Anchor
+                  href="https://www.instagram.com/mt9.com.br/"
+                  target="_blank"
+                  c="dimmed"
+                  size="sm"
+                  className="hover:text-blue-600 transition-colors duration-200"
+                >
+                  @mt9.com.br
+                </Anchor>
+              </Group>
             </Stack>
-          </Box>
+          </GridCol>
 
-          {/* Links de Mídia Social */}
-          <Group
-            gap="md"
-            mt={{ base: 0, sm: "1rem" }}
-            className="sm:self-start self-center"
-          >
-            <ActionIcon
-              variant="subtle"
-              color="dark"
-              component="a"
-              href="https://facebook.com"
-              target="_blank"
-              size="lg"
-              className="transition-transform duration-200 hover:scale-110"
-            >
-              <Facebook size={24} />
-            </ActionIcon>
-            <ActionIcon
-              variant="subtle"
-              color="dark"
-              component="a"
-              href="https://instagram.com"
-              target="_blank"
-              size="lg"
-              className="transition-transform duration-200 hover:scale-110"
-            >
-              <Instagram size={24} />
-            </ActionIcon>
-          </Group>
-        </Flex>
+          {/* Coluna da Direita: Links */}
+          <GridCol span={{ base: 12, md: 8 }}>
+            <Grid gutter={{ base: "xl", sm: "md" }}>
+              {Object.values(footerLinks).map((section) => (
+                <GridCol span={{ base: 6, sm: 4 }} key={section.title}>
+                  <Stack gap="sm">
+                    <Title
+                      order={4}
+                      size="sm"
+                      fw={700}
+                      c="dark.4"
+                      tt="uppercase"
+                    >
+                      {section.title}
+                    </Title>
+                    {section.links.map((link) => (
+                      <Anchor
+                        key={link.href}
+                        component={Link}
+                        href={link.href}
+                        c="dimmed"
+                        size="sm"
+                        className="hover:text-blue-600 transition-colors duration-200"
+                      >
+                        {link.label}
+                      </Anchor>
+                    ))}
+                  </Stack>
+                </GridCol>
+              ))}
+            </Grid>
+          </GridCol>
+        </Grid>
 
         <Divider my="xl" />
 
-        {/* Seções de Links */}
-        <Box my="xl">
-          <Flex
-            wrap="wrap"
-            gap={{ base: "xl", md: 50 }}
-            justify={{ base: "flex-start", sm: "flex-start" }}
-            align="flex-start"
-          >
-            {Object.values(footerLinks).map((section) => (
-              <Box
-                key={section.title}
-                maw={{ base: "100%", xs: 160 }}
-                w={{ base: "100%", xs: "auto" }}
-                ta={{ base: "center", xs: "left" }}
-              >
-                <Title order={3} size="h6" mb="md">
-                  {section.title}
-                </Title>
-                <Stack gap="xs">
-                  {section.links.map((link) => (
-                    <Link
-                      key={link.href}
-                      href={link.href}
-                      style={{
-                        color: "var(--mantine-color-dark)",
-                        textDecoration: "none",
-                        fontSize: "var(--mantine-font-size-sm)",
-                      }}
-                      className="hover:underline transition-colors duration-200"
-                    >
-                      {link.label}
-                    </Link>
-                  ))}
-                </Stack>
-              </Box>
-            ))}
-          </Flex>
-        </Box>
-
-        <Divider my="xl" style={{ color: "var(--mantine-color-dark)" }} />
-
-        {/* Copyright e Links Legais */}
+        {/* Barra Inferior: Copyright e Links Legais */}
         <Flex
-          direction={{ base: "column", md: "row" }}
+          direction={{ base: "column-reverse", sm: "row" }}
           justify="space-between"
-          align={{ base: "center", md: "center" }}
-          gap={{ base: "xl", md: "md" }}
-          wrap="wrap"
+          align="center"
+          gap="md"
         >
-          <Group gap="xs" justify="center" wrap="wrap">
-            <Text size="xs" c="dark" ta={{ base: "center", md: "left" }}>
-              © {new Date().getFullYear()} MT9 News. Todos os direitos
-              reservados.
-            </Text>
-            <Text size="xs" c="dark.4" display={{ base: "none", sm: "block" }}>
-              •
-            </Text>
-            <Text size="xs" c="dark" ta={{ base: "center", md: "left" }}>
-              Desenvolvido por{" "}
-              <Link
-                href="https://www.github.com/David-Santosx"
-                target="_blank"
-                className="hover:underline"
-                style={{ color: "#00adef" }}
-              >
-                David Santos
-              </Link>
-            </Text>
-          </Group>
-          <Group gap="md" justify="center" wrap="wrap" mt={{ base: 0, md: 0 }}>
-            <Link
+          <Text size="xs" c="dimmed">
+            © {new Date().getFullYear()} MT9 News. Todos os direitos reservados.
+            Desenvolvido por{" "}
+            <Anchor
+              href="https://www.github.com/David-Santosx"
+              target="_blank"
+              c="blue.6"
+              size="xs"
+            >
+              David Santos
+            </Anchor>
+          </Text>
+          <Group gap="md">
+            <Anchor
+              component={Link}
               href="/politica-privacidade"
-              style={{
-                color: "var(--mantine-color-dark)",
-                fontSize: "var(--mantine-font-size-xs)",
-              }}
-              className="hover:underline transition-colors duration-200"
+              c="dimmed"
+              size="xs"
             >
               Política de Privacidade
-            </Link>
-            <Link
-              href="/termos-uso"
-              style={{
-                color: "var(--mantine-color-dark)",
-                fontSize: "var(--mantine-font-size-xs)",
-              }}
-              className="hover:underline transition-colors duration-200"
-            >
+            </Anchor>
+            <Anchor component={Link} href="/termos-uso" c="dimmed" size="xs">
               Termos de Uso
-            </Link>
-            <Link
-              href="/contato"
-              style={{
-                color: "var(--mantine-color-dark)",
-                fontSize: "var(--mantine-font-size-xs)",
-              }}
-              className="hover:underline transition-colors duration-200"
-            >
-              Contato
-            </Link>
+            </Anchor>
           </Group>
         </Flex>
       </Container>

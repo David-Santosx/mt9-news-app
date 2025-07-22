@@ -16,7 +16,7 @@ import {
 } from "@mantine/core";
 import Image from "next/image";
 import Link from "next/link";
-import { Facebook, Instagram, X } from "lucide-react";
+import { Instagram, X } from "lucide-react";
 import { useDisclosure } from "@mantine/hooks";
 import AdDisplay, { AdPosition } from "./ad-display";
 
@@ -47,11 +47,15 @@ export default function Header() {
                 @mt9.com.br
               </Text>
               <Divider c="dark" orientation="vertical" />
-              <ActionIcon variant="transparent" size="sm">
+              <ActionIcon
+                variant="transparent"
+                size="sm"
+                component="a"
+                href="https://www.instagram.com/mt9.com.br/"
+                target="_blank"
+                aria-label="Instagram"
+              >
                 <Instagram color="white" size={16} />
-              </ActionIcon>
-              <ActionIcon variant="transparent" size="sm">
-                <Facebook color="white" size={16} />
               </ActionIcon>
             </Group>
           </Flex>
@@ -190,11 +194,16 @@ export default function Header() {
 
           {/* Redes Sociais */}
           <Group justify="center" pb="xl">
-            <ActionIcon variant="filled" size="lg" color="#00adef">
+            <ActionIcon
+              variant="filled"
+              size="lg"
+              color="#00adef"
+              component="a"
+              href="https://instagram.com"
+              target="_blank"
+              aria-label="Instagram"
+            >
               <Instagram size={20} />
-            </ActionIcon>
-            <ActionIcon variant="filled" size="lg" color="#00adef">
-              <Facebook size={20} />
             </ActionIcon>
           </Group>
         </Stack>

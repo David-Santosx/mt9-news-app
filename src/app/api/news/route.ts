@@ -1,5 +1,8 @@
 import { NextResponse, NextRequest } from "next/server";
-import { getRecentNews, getNewsByCategory } from "@/services/news-service";
+import { getPaginatedNews } from "@/services/news-service";
+
+// Definir explicitamente o runtime como Node.js para garantir que este código seja executado no servidor
+export const runtime = "nodejs";
 
 export async function GET(request: NextRequest) {
   try {
@@ -7,21 +10,16 @@ export async function GET(request: NextRequest) {
     const category = searchParams.get("category");
     const limitParam = searchParams.get("limit");
     const limit = limitParam ? parseInt(limitParam, 10) : 9; // Default é 9 notícias
+    const skipParam = searchParams.get("skip");
+    const skip = skipParam ? parseInt(skipParam, 10) : 0;
 
-    let news;
-
-    if (category) {
-      // Buscar notícias por categoria
-      news = await getNewsByCategory(category, limit);
-    } else {
-      // Buscar notícias recentes (sem filtro de categoria)
-      news = await getRecentNews(limit);
-    }
+    // Usar a função unificada para buscar notícias com ou sem categoria
+    const result = await getPaginatedNews(category || undefined, limit, skip);
 
     return NextResponse.json({
       success: true,
-      news,
-      total: news.length,
+      news: result.news,
+      hasMore: result.hasMore,
     });
   } catch (error) {
     console.error("Erro ao buscar notícias:", error);
