@@ -13,15 +13,18 @@ export const s3 = new S3Client({
 
 export async function uploadToS3(file: File, bucket: string): Promise<string> {
   const buffer = Buffer.from(await file.arrayBuffer());
-  const ext = file.name.split('.').pop();
+  const ext = file.name.split(".").pop();
   const filename = `${crypto.randomUUID()}.${ext}`;
 
-  await s3.send(new PutObjectCommand({
-    Bucket: bucket,
-    Key: filename,
-    Body: buffer,
-    ContentType: file.type,
-  }));
+  await s3.send(
+    new PutObjectCommand({
+      Bucket: bucket,
+      Key: filename,
+      Body: buffer,
+      ContentType: file.type,
+    })
+  );
 
-  return `${process.env.S3_ENDPOINT}/${bucket}/${filename}`;
+  // Retorna no formato correto para Supabase
+  return `${process.env.S3_ENDPOINT}/storage/v1/object/public/${bucket}/${filename}`;
 }
