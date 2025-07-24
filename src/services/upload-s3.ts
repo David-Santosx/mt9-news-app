@@ -1,5 +1,5 @@
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
-import crypto from 'crypto';
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import crypto from "crypto";
 
 export const s3 = new S3Client({
   endpoint: process.env.S3_ENDPOINT || "http://localhost:9000",
@@ -25,12 +25,15 @@ export async function uploadToS3(file: File, bucket: string): Promise<string> {
     })
   );
 
-  // Constrói a URL pública base removendo o caminho específico do S3
-  const publicUrlBase = (process.env.S3_ENDPOINT || "").replace(
-    /\/storage\/v1\/s3$/,
-    ""
-  );
+  // Constrói a URL pública base removendo o caminho específico do S3 para produção
+  if (process.env.NODE_ENV === "production") {
+    const publicUrlBase = (process.env.S3_ENDPOINT || "").replace(
+      /\/storage\/v1\/s3$/,
+      ""
+    );
 
-  // Retorna a URL pública no formato correto
-  return `${publicUrlBase}/storage/v1/object/public/${bucket}/${filename}`;
+    return `${publicUrlBase}/storage/v1/object/public/${bucket}/${filename}`;
+  }
+  // Em desenvolvimento, retorna a URL diretamente do endpoint S3
+  return `${process.env.S3_ENDPOINT}/${bucket}/${filename}`;
 }
