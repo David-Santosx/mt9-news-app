@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from "react";
 import { useForm } from "@mantine/form";
 import {
@@ -12,51 +13,28 @@ import {
   TagsInput,
 } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
-import NewsFormSubmit from "../actions/news-form-submit";
+import { newsSchema, NewsCategories } from "@/lib/schemas/news-schema";
+import z from "zod";
+import { createNews } from "../actions/news-form-submit";
+import { zod4Resolver } from "mantine-form-zod-resolver";
+import { notifications } from "@mantine/notifications";
+
+export type News = z.infer<typeof newsSchema>;
 
 export default function NewsForm() {
-  const form = useForm({
+  const form = useForm<News>({
     initialValues: {
       title: "",
       subtitle: "",
       category: "Geral",
       content: "",
-      tags: [] as string[],
+      tags: [],
       publisher: "Da Redação",
-      image: null as File | null,
-      publicationDate: null as Date | null,
+      publishedAt: new Date(),
+      image: undefined as File | undefined, // Inicialmente sem imagem
     },
-
-    validate: {
-      title: (value) =>
-        value.trim().length < 5
-          ? "O título deve ter pelo menos 5 caracteres"
-          : null,
-      subtitle: (value) =>
-        value.trim().length === 0 ? "O subtítulo é obrigatório" : null,
-      category: (value) => (!value ? "Selecione uma categoria" : null),
-      content: (value) =>
-        value.trim().length < 20
-          ? "O conteúdo deve ter pelo menos 20 caracteres"
-          : null,
-      tags: (value) =>
-        value.length === 0
-          ? "Adicione pelo menos uma palavra-chave (tag)"
-          : null,
-      publisher: (value) =>
-        value.trim().length < 3
-          ? "O nome do publicador deve ter pelo menos 3 caracteres"
-          : null,
-      image: (file) => {
-        if (!file) return "A imagem é obrigatória";
-        if (file.size > 5 * 1024 * 1024)
-          // 5MB em bytes
-          return "A imagem não pode ser maior que 5MB";
-        return null;
-      },
-      publicationDate: (date) =>
-        !date ? "Selecione a data da publicação" : null,
-    },
+    validate: zod4Resolver(newsSchema), // Validação usando o schema Zod
+    mode: "controlled",
   });
 
   // Para preview da imagem
@@ -64,7 +42,10 @@ export default function NewsForm() {
 
   // Controla a mudança para gerar o preview
   function handleImageChange(file: File | null) {
-    form.setFieldValue("image", file);
+    if (file !== null) {
+      form.setFieldValue("image", file ?? undefined);
+    }
+
     if (file) {
       const url = URL.createObjectURL(file);
       setImageUrl(url);
@@ -73,30 +54,36 @@ export default function NewsForm() {
     }
   }
 
+  // Função para lidar com o envio do formulário
+  async function handleSubmit(values: typeof form.values) {
+    try {
+      await createNews(values);
+      notifications.show({
+        title: "Notícia criada com sucesso",
+        message: "A notícia foi criada e publicada.",
+        color: "green",
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        notifications.show({
+          title: "Erro ao criar notícia",
+          message: error.message,
+          color: "red",
+        });
+      } else {
+        notifications.show({
+          title: "Erro desconhecido",
+          message:
+            "Ocorreu um erro ao criar a notícia. Tente novamente mais tarde.",
+          color: "red",
+        });
+      }
+    }
+  }
+
   return (
     <form
-      onSubmit={form.onSubmit(async (values) => {
-        const formData = new FormData();
-        formData.append("title", values.title);
-        formData.append("subtitle", values.subtitle);
-        formData.append("category", values.category);
-        formData.append("content", values.content);
-        formData.append("tags", JSON.stringify(values.tags));
-        formData.append("publisher", values.publisher);
-        if (values.publicationDate) {
-          // Garante que é um objeto Date e formata para yyyy-mm-dd
-          const dateObj = new Date(values.publicationDate);
-          dateObj.setUTCDate(dateObj.getUTCDate() + 1); // Ajusta para UTC
-          const dateStr = dateObj.toISOString().slice(0, 10);
-          formData.append("publicationDate", dateStr);
-        }
-        if (values.image) {
-          formData.append("image", values.image);
-        }
-        await NewsFormSubmit(formData);
-        form.reset(); // Reseta o formulário após o envio
-        setImageUrl(null); // Limpa o preview da imagem
-      })}
+      onSubmit={form.onSubmit(async (values) => await handleSubmit(values))}
       style={{ width: "100%" }}
     >
       <Stack
@@ -112,6 +99,7 @@ export default function NewsForm() {
             placeholder="Digite o título da notícia"
             {...form.getInputProps("title")}
             required
+            key={form.key("title")}
             withAsterisk
             size="md"
           />
@@ -120,6 +108,7 @@ export default function NewsForm() {
             placeholder="Digite o subtítulo"
             {...form.getInputProps("subtitle")}
             required
+            key={form.key("subtitle")}
             withAsterisk
             size="md"
           />
@@ -129,22 +118,26 @@ export default function NewsForm() {
             required
             withAsterisk
             label="Categoria"
-            data={["Geral", "Política", "Esportes", "Cultura", "Tecnologia"]}
+            placeholder="Selecione uma categoria"
+            key={form.key("category")}
+            data={NewsCategories}
             {...form.getInputProps("category")}
             size="md"
           />
           <DateInput
             required
+            key={form.key("publishedAt")}
             withAsterisk
             label="Data da Publicação"
             placeholder="Selecione a data"
             valueFormat="DD/MM/YYYY"
-            {...form.getInputProps("publicationDate")}
+            {...form.getInputProps("publishedAt")}
             size="md"
           />
         </Group>
         <Textarea
           required
+          key={form.key("content")}
           withAsterisk
           label="Conteúdo"
           placeholder="Escreva o conteúdo da notícia"
@@ -155,14 +148,17 @@ export default function NewsForm() {
         />
         <TagsInput
           clearable
+          key={form.key("tags")}
           label="Adicione palavras-chave"
           placeholder="Palavras-chave"
+          withAsterisk
           {...form.getInputProps("tags")}
           size="md"
         />
         <TextInput
           required
           withAsterisk
+          key={form.key("publisher")}
           label="Publicador"
           placeholder="Quem publicou?"
           {...form.getInputProps("publisher")}
@@ -171,9 +167,10 @@ export default function NewsForm() {
         <FileInput
           required
           withAsterisk
+          key={form.key("image")}
           label="Imagem"
           placeholder="Selecione uma imagem"
-          accept="image/*"
+          accept="image/jpg,image/jpeg,image/png,image/webp"
           value={form.values.image}
           onChange={handleImageChange}
           clearable
@@ -191,6 +188,7 @@ export default function NewsForm() {
             />
           </Group>
         )}
+
         <Group justify="flex-end" mt="md" gap="md">
           <Button
             loading={form.submitting}

@@ -14,7 +14,7 @@ export const s3 = new S3Client({
 export async function uploadToS3(file: File, bucket: string): Promise<string> {
   const buffer = Buffer.from(await file.arrayBuffer());
   const ext = file.name.split(".").pop();
-  const filename = `${crypto.randomUUID()}.${ext}`;
+  const filename = `${crypto.randomBytes(16).toString("hex")}.${ext}`;
 
   await s3.send(
     new PutObjectCommand({
