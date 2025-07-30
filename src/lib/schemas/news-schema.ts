@@ -1,6 +1,13 @@
 import { z } from "zod";
 
 // Lista de categorias para ser usada tanto no schema quanto no formulário
+
+/*
+  * Categorias de notícias disponíveis.
+  * Essas categorias são usadas para validar a categoria da notícia
+  * e também podem ser utilizadas em formulários ou interfaces de usuário.
+  * ["Geral", "Política", "Cidades", "Agronegócio", "Polícia", "Saúde", "Esportes", "Comércios"]
+*/
 export const NewsCategories = [
   "Geral",
   "Política",
@@ -14,7 +21,7 @@ export const NewsCategories = [
 
 export const newsSchema = z.object({
   title: z.string().min(5, "O título deve ter pelo menos 5 caracteres"),
-  subtitle: z.string().min(1, "O subtítulo é obrigatório"),
+  subtitle: z.string().default("").nullable(),
   category: z
     .string()
     .refine((value) => NewsCategories.includes(value), {
@@ -54,7 +61,9 @@ export const newsSchema = z.object({
     )
     .optional(),
   publishedAt: z
-    .date()
+    .date({message: "Data inválida"})
     .optional()
     .default(() => new Date()),
 });
+
+export type News = z.infer<typeof newsSchema>;

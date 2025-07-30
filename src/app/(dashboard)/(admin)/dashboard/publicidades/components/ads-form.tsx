@@ -1,50 +1,33 @@
+"use client";
 import React, { useState } from "react";
 import { useForm } from "@mantine/form";
 import {
   TextInput,
+  Select,
   FileInput,
   Button,
   Image,
   Stack,
   Group,
-  Select,
-  Text,
-  Box,
 } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
-import AdsFormSubmit from "../actions/ads-form-submit";
+import { zod4Resolver } from "mantine-form-zod-resolver";
+import { notifications } from "@mantine/notifications";
+import { adsSchema, Ads, AdPositionList } from "@/lib/schemas/ads-schema";
+import { createAds } from "@/app/actions/publicidades/create-ads";
 
 export default function AdsForm() {
-  const form = useForm({
+  const form = useForm<Ads>({
     initialValues: {
       campaing: "",
-      startDate: null as Date | null,
-      endDate: null as Date | null,
       link: "",
-      image: null as File | null,
-      position: "" as "HEADER" | "HIGHLIGHT" | "",
+      position: "HEADER",
+      startDate: new Date(),
+      endDate: new Date(new Date().setDate(new Date().getDate() + 30)), // Padrão para 30 dias após a data atual
+      image: undefined as File | undefined, // Inicialmente sem imagem
     },
-
-    validate: {
-      campaing: (value) =>
-        value.trim().length < 5
-          ? "O nome da campanha deve ter pelo menos 5 caracteres"
-          : null,
-      image: (file) => {
-        if (!file) return "A imagem é obrigatória";
-        if (file.size > 5 * 1024 * 1024)
-          // 5MB em bytes
-          return "A imagem não pode ser maior que 5MB";
-        return null;
-      },
-      startDate: (date) => (!date ? "Selecione a data de início" : null),
-      endDate: (date) => (!date ? "Selecione a data de término" : null),
-      link: (value) =>
-        value.startsWith("http://") || value.startsWith("https://")
-          ? null
-          : "O link deve começar com http:// ou https://",
-      position: (value) => (!value ? "Selecione a posição do anúncio" : null),
-    },
+    validate: zod4Resolver(adsSchema), // Validação usando o schema Zod
+    mode: "controlled",
   });
 
   // Para preview da imagem
@@ -52,7 +35,10 @@ export default function AdsForm() {
 
   // Controla a mudança para gerar o preview
   function handleImageChange(file: File | null) {
-    form.setFieldValue("image", file);
+    if (file !== null) {
+      form.setFieldValue("image", file ?? undefined);
+    }
+
     if (file) {
       const url = URL.createObjectURL(file);
       setImageUrl(url);
@@ -61,33 +47,36 @@ export default function AdsForm() {
     }
   }
 
+  // Função para lidar com o envio do formulário
+  async function handleSubmit(values: typeof form.values) {
+    try {
+      await createAds(values);
+      notifications.show({
+        title: "Publicidade criada com sucesso",
+        message: "A publicidade foi criada e publicada.",
+        color: "green",
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        notifications.show({
+          title: "Erro ao criar publicidade",
+          message: error.message,
+          color: "red",
+        });
+      } else {
+        notifications.show({
+          title: "Erro desconhecido",
+          message:
+            "Ocorreu um erro ao criar a publicidade. Tente novamente mais tarde.",
+          color: "red",
+        });
+      }
+    }
+  }
+
   return (
     <form
-      onSubmit={form.onSubmit(async (values) => {
-        const formData = new FormData();
-        formData.append("campaing", values.campaing);
-        formData.append("link", values.link);
-        formData.append("position", values.position);
-        if (values.startDate) {
-          // Garante que é um objeto Date e formata para yyyy-mm-dd
-          const dateObj = new Date(values.startDate);
-          dateObj.setUTCDate(dateObj.getUTCDate() + 1); // Ajusta para UTC
-          const dateStr = dateObj.toISOString().slice(0, 10);
-          formData.append("startDate", dateStr);
-          }
-          if (values.endDate) {
-              const dateObj = new Date(values.endDate);
-              dateObj.setUTCDate(dateObj.getUTCDate() + 1); // Ajusta para UTC
-              const dateStr = dateObj.toISOString().slice(0, 10);
-              formData.append("endDate", dateStr);
-        }
-        if (values.image) {
-          formData.append("image", values.image);
-        }
-        await AdsFormSubmit(formData);
-        form.reset(); // Reseta o formulário após o envio
-        setImageUrl(null); // Limpa o preview da imagem
-      })}
+      onSubmit={form.onSubmit(async (values) => await handleSubmit(values))}
       style={{ width: "100%" }}
     >
       <Stack
@@ -97,69 +86,59 @@ export default function AdsForm() {
         p={{ base: "xs", sm: "xl" }}
         style={{ width: "100%" }}
       >
-        <TextInput
-          label="Nome da Campanha"
-          placeholder="Digite o nome da campanha publicitária"
-          {...form.getInputProps("campaing")}
-          required
-          withAsterisk
-          size="md"
-        />
         <Group grow wrap="wrap" gap="md">
-          <DateInput
-            required
+          <TextInput
+            label="Campanha"
+            placeholder="Digite o nome da campanha"
+            {...form.getInputProps("campaing")}
+            key={form.key("campaing")}
             withAsterisk
-            label="Data de Início"
-            placeholder="Selecione a data inicial"
-            valueFormat="DD/MM/YYYY"
-            {...form.getInputProps("startDate")}
             size="md"
-            clearable={false}
           />
-          <DateInput
-            required
-            withAsterisk
-            label="Data de Término"
-            placeholder="Selecione a data final"
-            valueFormat="DD/MM/YYYY"
-            {...form.getInputProps("endDate")}
+          <TextInput
+            label="Link"
+            placeholder="Digite o link da campanha"
+            {...form.getInputProps("link")}
+            key={form.key("link")}
             size="md"
-            clearable={false}
-            minDate={form.values.startDate || undefined}
           />
         </Group>
-        <TextInput
-          required
-          withAsterisk
-          label="Link"
-          placeholder="https://exemplo.com"
-          {...form.getInputProps("link")}
-          size="md"
-        />
-        <Box>
+        <Group grow wrap="wrap" gap="md">
           <Select
-            required
             withAsterisk
-            label="Posição do Anúncio"
-            description="Escolha o local onde o anúncio será exibido"
-            placeholder="Selecione a posição"
-            data={[
-              { value: "HEADER", label: "Cabeçalho (728x90)" },
-              { value: "HIGHLIGHT", label: "Bloco Destaque (300x250)" },
-            ]}
+            label="Posição"
+            placeholder="Selecione uma posição"
+            key={form.key("position")}
+            data={AdPositionList}
             {...form.getInputProps("position")}
             size="md"
           />
-          <Text size="xs" c="dimmed" mt={4}>
-            Certifique-se que a imagem tenha as dimensões corretas para a posição escolhida
-          </Text>
-        </Box>
+          <DateInput
+            key={form.key("startDate")}
+            withAsterisk
+            label="Data de Início"
+            placeholder="Selecione a data"
+            valueFormat="DD/MM/YYYY"
+            {...form.getInputProps("startDate")}
+            size="md"
+          />
+          <DateInput
+            key={form.key("endDate")}
+            withAsterisk
+            label="Data de Término"
+            placeholder="Selecione a data"
+            valueFormat="DD/MM/YYYY"
+            {...form.getInputProps("endDate")}
+            size="md"
+          />
+        </Group>
+
         <FileInput
-          required
           withAsterisk
+          key={form.key("image")}
           label="Imagem"
           placeholder="Selecione uma imagem"
-          accept="image/*"
+          accept="image/jpg,image/jpeg,image/png,image/webp,image/gif"
           value={form.values.image}
           onChange={handleImageChange}
           clearable
@@ -177,6 +156,7 @@ export default function AdsForm() {
             />
           </Group>
         )}
+
         <Group justify="flex-end" mt="md" gap="md">
           <Button
             loading={form.submitting}

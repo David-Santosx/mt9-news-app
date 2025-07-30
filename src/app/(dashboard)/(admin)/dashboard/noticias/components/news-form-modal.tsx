@@ -1,6 +1,6 @@
 "use client";
 import { useDisclosure } from "@mantine/hooks";
-import { Button, Modal } from "@mantine/core";
+import { Button, Modal, Tooltip } from "@mantine/core";
 import { PlusIcon } from "lucide-react";
 import NewsForm from "./news-form";
 
@@ -9,13 +9,15 @@ export default function NewsFormModal() {
 
   return (
     <>
-      <Modal opened={opened} onClose={close} title="Nova notícia">
+      <Modal opened={opened} onClose={close} size={"lg"} title="Nova notícia">
         <NewsForm />
       </Modal>
 
-      <Button onClick={open} rightSection={<PlusIcon size={18} />}>
-        Nova Notícia
-      </Button>
+      <Tooltip label="Criar nova notícia">
+        <Button onClick={open} leftSection={<PlusIcon size={14} />}>
+          Nova notícia
+        </Button>
+      </Tooltip>
     </>
   );
 }

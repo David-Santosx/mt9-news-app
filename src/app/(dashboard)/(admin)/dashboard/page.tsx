@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import {
   Paper,
   Text,
@@ -10,24 +9,14 @@ import {
   Group,
   Skeleton,
 } from "@mantine/core";
-import { notifications } from "@mantine/notifications";
 import { AreaChart } from "@mantine/charts";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Newspaper, MonitorPlay } from "lucide-react";
-
-// Note: Como este é um componente client-side, os metadados são definidos no layout parent
-
-type NewsCount = {
-  count: number;
-  createdAt: string;
-};
-
-type DashboardData = {
-  totalNews: number;
-  totalAds: number;
-  newsCountByMonth: NewsCount[];
-};
+import { useEffect, useState } from "react";
+import { notifications } from "@mantine/notifications";
+import { getDashboardDataCached } from "../../../actions/dashboard/get-dashboard-data";
+import type { DashboardData } from "../../../actions/dashboard/get-dashboard-data";
 
 export default function Page() {
   const [data, setData] = useState<DashboardData | null>(null);
@@ -36,16 +25,8 @@ export default function Page() {
   useEffect(() => {
     async function fetchDashboardData() {
       try {
-        const baseUrl =
-          process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-        const response = await fetch(`${baseUrl}/api/admin/dashboard`);
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.error || "Falha ao carregar dados do dashboard");
-        }
-
-        setData(data);
+        const dashboardData = await getDashboardDataCached();
+        setData(dashboardData);
       } catch (error) {
         console.error("Erro ao carregar dados:", error);
         notifications.show({
@@ -66,10 +47,12 @@ export default function Page() {
 
   // Formata os dados para o gráfico
   const chartData =
-    data?.newsCountByMonth.map((item) => ({
-      date: format(new Date(item.createdAt), "MMM/yyyy", { locale: ptBR }),
+    data?.newsCountByDay.map((item) => ({
+      date: format(new Date(item.createdAt), "dd/MM/yyyy", { locale: ptBR }),
       count: item.count,
     })) || [];
+
+  console.log("Dashboard Data:", chartData);
 
   return (
     <Stack gap="lg">
@@ -117,9 +100,7 @@ export default function Page() {
         ) : (
           <>
             <Stack gap="xs" mb="md">
-              <Title order={3}>
-                Evolução de Notícias
-              </Title>
+              <Title order={3}>Evolução de Notícias</Title>
               <Text size="sm" c="dimmed">
                 Quantidade de notícias publicadas por mês
               </Text>
@@ -129,10 +110,10 @@ export default function Page() {
               data={chartData}
               dataKey="date"
               series={[
-                { 
+                {
                   name: "Notícias",
-                  color: "var(--mantine-primary-color-filled)"
-                }
+                  color: "var(--mantine-primary-color-filled)",
+                },
               ]}
               withLegend
               gridAxis="xy"
@@ -141,26 +122,34 @@ export default function Page() {
               curveType="natural"
               yAxisProps={{
                 label: "Quantidade de Notícias",
-                tickFormatter: (value) => value.toLocaleString('pt-BR')
+                tickFormatter: (value) => value.toLocaleString("pt-BR"),
               }}
               xAxisProps={{
-                label: "Período"
+                label: "Período",
               }}
               tooltipProps={{
                 content: ({ payload }) => {
                   if (!payload || payload.length === 0) return null;
                   const value = payload[0]?.value as number;
                   return (
-                    <Paper withBorder shadow="sm" radius="md" p="md" bg="var(--mantine-color-body)">
+                    <Paper
+                      withBorder
+                      shadow="sm"
+                      radius="md"
+                      p="md"
+                      bg="var(--mantine-color-body)"
+                    >
                       <Stack gap="xs">
                         <Text size="sm" c="dimmed" tt="uppercase">
                           {payload[0]?.payload?.date}
                         </Text>
                         <Group gap="xs" align="baseline">
                           <Text size="xl" fw={700}>
-                            {value?.toLocaleString('pt-BR')}
+                            {value?.toLocaleString("pt-BR")}
                           </Text>
-                          <Text size="sm" c="dimmed">notícias</Text>
+                          <Text size="sm" c="dimmed">
+                            notícias
+                          </Text>
                         </Group>
                       </Stack>
                     </Paper>

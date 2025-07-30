@@ -15,27 +15,46 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { Instagram } from "lucide-react";
+import { NewsCategories } from "@/lib/schemas/news-schema";
+import slugify from "slugify";
 
 // Links estruturados por categoria
 const footerLinks = {
   categories: {
     title: "Categorias",
-    links: [
-      { label: "Geral", href: "/geral" },
-      { label: "Política", href: "/politica" },
-      { label: "Esportes", href: "/esportes" },
-      { label: "Cultura", href: "/cultura" },
-      { label: "Tecnologia", href: "/tecnologia" },
-      { label: "Comércios", href: "/comercios" },
-    ],
+    links: NewsCategories.map((category) => ({
+      label: category,
+      href: `/noticias/categoria/${slugify(category.toLowerCase())}`,
+      target: "_self",
+    })),
   },
   about: {
     title: "Sobre",
     links: [
-      { label: "Sobre Nós", href: "/sobre" },
-      { label: "Contato", href: "/contato" },
-      { label: "Política de Privacidade", href: "/politica-privacidade" },
-      { label: "Termos de Uso", href: "/termos-uso" },
+      { label: "Sobre Nos", href: "/sobre", target: "_self" },
+      { label: "Contato", href: "/contato", target: "_self" },
+      {
+        label: "Politica de Privacidade",
+        href: "/politica-privacidade",
+        target: "_self",
+      },
+      { label: "Termos de Uso", href: "/termos-uso", target: "_self" },
+    ],
+  },
+  tools: {
+    title: "Ferramentas",
+    links: [
+      {
+        label: "Documentação do Projeto",
+        href: "https://github.com/David-Santosx/mt9-news-app?tab=readme-ov-file#readme",
+        target: "_blank",
+      },
+      {
+        label: "Repositório GitHub",
+        href: "https://github.com/David-Santosx/mt9-news-app",
+        target: "_blank",
+      },
+      { label: "Dashboard Admin", href: "/dashboard", target: "_self" },
     ],
   },
 };
@@ -108,9 +127,10 @@ export default function Footer() {
                     </Title>
                     {section.links.map((link) => (
                       <Anchor
-                        key={link.href}
+                        key={slugify(link.label.toLowerCase())}
                         component={Link}
                         href={link.href}
+                        target={link.target}
                         c="dimmed"
                         size="sm"
                         className="hover:text-blue-600 transition-colors duration-200"
@@ -135,8 +155,8 @@ export default function Footer() {
           gap="md"
         >
           <Text size="xs" c="dimmed">
-            © {new Date().getFullYear()} MT9 News. Todos os direitos reservados.
-            Desenvolvido por{" "}
+            © {new Date().getFullYear()} MT9 Notícias & Comércios. Todos os
+            direitos reservados. Desenvolvido por{" "}
             <Anchor
               href="https://www.github.com/David-Santosx"
               target="_blank"
@@ -144,7 +164,11 @@ export default function Footer() {
               size="xs"
             >
               David Santos
-            </Anchor>
+            </Anchor>{" "}
+            •{" "}
+            <Text component="span" c="blue.6" size="xs">
+              Studio DS - Tecnologias
+            </Text>
           </Text>
           <Group gap="md">
             <Anchor

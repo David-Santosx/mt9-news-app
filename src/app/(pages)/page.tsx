@@ -1,7 +1,6 @@
-import HeroNewsCarousel from "@/app/components/hero-news-carousel";
-import HomeNewsSections from "@/app/components/home-news-sections";
-
 import { Metadata } from "next";
+import NewsHeroSection from "../components/news-hero-section";
+import NewsCategoriesSection from "../components/news-categories-section";
 
 // Gerar metadados para a página inicial
 export async function generateMetadata(): Promise<Metadata> {
@@ -35,15 +34,11 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-
 export default function Page() {
   return (
-    <>
-      {/* Seção Hero com Carousel de Notícias */}
-      <HeroNewsCarousel />
-
-      {/* Seções de notícias por categoria */}
-      <HomeNewsSections />
-    </>
+    <main>
+      <NewsHeroSection />
+      <NewsCategoriesSection />
+    </main>
   );
 }

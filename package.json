@@ -2,6 +2,7 @@
   "name": "mt9-news-app",
   "version": "0.1.0",
   "private": true,
+  "author": {"name": "David Santos"},
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && next build",
@@ -22,6 +23,7 @@
     "@prisma/client": "^6.11.1",
     "@prisma/extension-accelerate": "^2.0.2",
     "@prisma/nextjs-monorepo-workaround-plugin": "^6.12.0",
+    "@tabler/icons-react": "^3.34.1",
     "@tiptap/extension-link": "^2.26.1",
     "@tiptap/pm": "^2.26.1",
     "@tiptap/react": "^2.26.1",
@@ -42,6 +44,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "recharts": "^2.15.4",
+    "slugify": "^1.6.6",
     "tailwind-merge": "^3.3.1",
     "tw-animate-css": "^1.3.5",
     "zod": "^4.0.9"

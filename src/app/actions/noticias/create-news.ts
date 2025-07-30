@@ -1,7 +1,9 @@
 "use server";
-import { News } from "@/app/(dashboard)/(admin)/dashboard/noticias/components/news-form";
+import { News } from "@/lib/schemas/news-schema";
 import { prisma } from "@/lib/prisma";
 import { uploadToS3 } from "@/services/upload-s3";
+import slugify from "slugify";
+import { revalidateTag } from "next/cache";
 
 export async function createNews(data: News) {
   try {
@@ -31,8 +33,14 @@ export async function createNews(data: News) {
     const news = await prisma.news.create({
       data: {
         title: data.title,
+        slug: slugify(data.title, {
+          lower: true,
+        }),
         subtitle: data.subtitle,
         category: data.category,
+        slugCategory: slugify(data.category, {
+          lower: true,
+        }),
         content: data.content,
         tags: data.tags,
         publisher: data.publisher,
@@ -40,6 +48,12 @@ export async function createNews(data: News) {
         image: imageUrl,
       },
     });
+
+    revalidateTag("public-news");
+    revalidateTag("public-news-by-category");
+    revalidateTag("public-news-by-title");
+    revalidateTag("public-news-by-slug");
+    revalidateTag("public-news-by-category-slug");
 
     return news;
   } catch (error) {

@@ -1,7 +1,7 @@
 "use client";
 import { useForm } from "@mantine/form";
 import { Stack, TextInput, Group, Button, Checkbox } from "@mantine/core";
-import FormSubmit from "../actions/formSubmit";
+import FormSubmit from "../actions/form-submit";
 import Image from "next/image";
 
 export default function AuthForm() {

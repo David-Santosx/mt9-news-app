@@ -1,7 +1,6 @@
 generator client {
   provider = "prisma-client-js"
-  output   = "../node_modules/.prisma/client"
-  binaryTargets = ["native", "linux-musl", "rhel-openssl-1.0.x"]
+  output   = "generated/"
 }
 
 datasource db {
@@ -77,11 +76,13 @@ model Verification {
 
 model News {
   id String @id @default(cuid())
-  title String
+  title String @unique
+  slug String @unique
   subtitle String?
   publisher String
   tags String[]
   category String
+  slugCategory String
   content String
   publishedAt DateTime
   image String?

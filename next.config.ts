@@ -1,5 +1,4 @@
 import type { NextConfig } from "next";
-const { PrismaPlugin } = require("@prisma/nextjs-monorepo-workaround-plugin");
 
 const nextConfig: NextConfig = {
   experimental: {
@@ -8,21 +7,13 @@ const nextConfig: NextConfig = {
       "@mantine/hooks",
       "@prisma/client",
     ],
+    serverActions: {
+      bodySizeLimit: "5mb",
+    },
   },
-  // SEO and Performance optimizations
   compress: true,
   poweredByHeader: false,
   generateEtags: false,
-
-  // Custom Webpack configuration
-  webpack: (config, { isServer }) => {
-    if (isServer) {
-      config.plugins = [...config.plugins, new PrismaPlugin()];
-    }
-    return config;
-  },
-
-  // Security headers that also help with SEO
   async headers() {
     return [
       {
@@ -62,8 +53,6 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-
-  // Image optimization for better SEO
   images: {
     formats: ["image/webp", "image/avif"],
     minimumCacheTTL: 60,

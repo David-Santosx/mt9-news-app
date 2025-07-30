@@ -18,16 +18,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { Instagram, X } from "lucide-react";
 import { useDisclosure } from "@mantine/hooks";
-import AdDisplay, { AdPosition } from "./ad-display";
+import AdDisplay from "./ad-display";
+import { NewsCategories } from "@/lib/schemas/news-schema";
+import slugify from "slugify";
 
-const headerLinks = [
-  { label: "Geral", href: "/geral" },
-  { label: "Política", href: "/politica" },
-  { label: "Esportes", href: "/esportes" },
-  { label: "Cultura", href: "/cultura" },
-  { label: "Tecnologia", href: "/tecnologia" },
-  { label: "Comércios", href: "/comercios" },
-];
+const headerLinks = NewsCategories.map((category) => ({
+  label: category,
+  href: `/noticias/categoria/${slugify(category.toLowerCase())}`,
+}));
 
 export default function Header() {
   const [opened, { toggle, close }] = useDisclosure(false);
@@ -40,7 +38,7 @@ export default function Header() {
         <Container size="xl" h="100%">
           <Flex justify="space-between" align="center" h="100%">
             <Text c="white" fs="italic" size="sm">
-              Fique por dentro das últimas notícias.
+              Seu portal de informação confiável e atualizada.
             </Text>
             <Group gap="xs">
               <Text c="white" size="sm">
@@ -85,7 +83,7 @@ export default function Header() {
                 <Image
                   src="/images/mt9-logo.svg"
                   alt="MT9 Notícias e Comércios"
-                  width={120}
+                  width={160}
                   height={90}
                   priority
                 />
@@ -107,7 +105,7 @@ export default function Header() {
               display={{ base: "none", md: "block" }}
               style={{ flex: 1, maxWidth: 728 }}
             >
-              <AdDisplay position={AdPosition.HEADER} width={728} height={90} />
+              <AdDisplay position={["HEADER"]} width={728} height={90} />
             </Box>
           </Flex>
 
@@ -199,7 +197,7 @@ export default function Header() {
               size="lg"
               color="#00adef"
               component="a"
-              href="https://instagram.com"
+              href="https://instagram.com/mt9.com.br"
               target="_blank"
               aria-label="Instagram"
             >

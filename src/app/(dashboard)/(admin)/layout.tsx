@@ -2,6 +2,7 @@
 import { useMediaQuery } from "@mantine/hooks";
 import Sidebar from "./dashboard/components/sidebar";
 import { AppShell, AppShellMain, Container } from "@mantine/core";
+import "@mantine/charts/styles.css";
 
 export default function AdminLayout({ children }: {
   children: React.ReactNode;}) {

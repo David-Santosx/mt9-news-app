@@ -1,20 +1,21 @@
-import type { Metadata } from "next";
 import Header from "../components/header";
 import { Divider } from "@mantine/core";
 import Footer from "../components/footer";
-
-export const metadata: Metadata = {};
+import { Container } from "@mantine/core";
+import { NewsTicker } from "../components/news-ticker";
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
   return (
     <main>
       <Header />
+      <NewsTicker />
       <Divider my="md" />
-      {children}
+      <Container size="xl">{children}</Container>
       <Footer />
     </main>
   );

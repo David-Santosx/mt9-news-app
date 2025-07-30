@@ -13,13 +13,10 @@ import {
   TagsInput,
 } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
-import { newsSchema, NewsCategories } from "@/lib/schemas/news-schema";
-import z from "zod";
-import { createNews } from "../actions/news-form-submit";
+import { newsSchema, NewsCategories, News } from "@/lib/schemas/news-schema";
 import { zod4Resolver } from "mantine-form-zod-resolver";
 import { notifications } from "@mantine/notifications";
-
-export type News = z.infer<typeof newsSchema>;
+import { createNews } from "@/app/actions/noticias/create-news";
 
 export default function NewsForm() {
   const form = useForm<News>({
@@ -98,7 +95,6 @@ export default function NewsForm() {
             label="Título"
             placeholder="Digite o título da notícia"
             {...form.getInputProps("title")}
-            required
             key={form.key("title")}
             withAsterisk
             size="md"
@@ -107,15 +103,12 @@ export default function NewsForm() {
             label="Subtítulo"
             placeholder="Digite o subtítulo"
             {...form.getInputProps("subtitle")}
-            required
             key={form.key("subtitle")}
-            withAsterisk
             size="md"
           />
         </Group>
         <Group grow wrap="wrap" gap="md">
           <Select
-            required
             withAsterisk
             label="Categoria"
             placeholder="Selecione uma categoria"
@@ -125,7 +118,6 @@ export default function NewsForm() {
             size="md"
           />
           <DateInput
-            required
             key={form.key("publishedAt")}
             withAsterisk
             label="Data da Publicação"
@@ -136,7 +128,6 @@ export default function NewsForm() {
           />
         </Group>
         <Textarea
-          required
           key={form.key("content")}
           withAsterisk
           label="Conteúdo"
@@ -156,7 +147,6 @@ export default function NewsForm() {
           size="md"
         />
         <TextInput
-          required
           withAsterisk
           key={form.key("publisher")}
           label="Publicador"
@@ -165,7 +155,6 @@ export default function NewsForm() {
           size="md"
         />
         <FileInput
-          required
           withAsterisk
           key={form.key("image")}
           label="Imagem"

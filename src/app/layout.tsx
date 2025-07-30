@@ -1,6 +1,5 @@
 import { Rubik } from "next/font/google";
 import "@mantine/core/styles.css";
-import "@mantine/carousel/styles.css";
 import {
   ColorSchemeScript,
   MantineProvider,
@@ -11,6 +10,7 @@ import "./globals.css";
 import "@mantine/notifications/styles.css";
 import "@mantine/dates/styles.css";
 import "@mantine/charts/styles.css";
+import "@mantine/carousel/styles.css";
 import { Notifications } from "@mantine/notifications";
 import { ModalsProvider } from "@mantine/modals";
 import type { Metadata } from "next";
@@ -44,9 +44,10 @@ export const metadata: Metadata = {
     "comércios",
     "mato grosso",
   ],
-  authors: [{ name: "David Santos" }],
+  authors: [{ name: "David Santos" }, { name: "Studio DS - Tecnologias" }],
   creator: "David Santos",
   publisher: "David Santos",
+  applicationName: "MT9 Notícias & Comércios",
   robots: {
     index: true,
     follow: true,

@@ -1,121 +1,133 @@
 "use client";
+
+import { getNews, getNewsByTitle } from "@/app/actions/noticias/get-news";
+import { News } from "@/lib/schemas/news-schema";
+import {
+  ActionIcon,
+  Button,
+  Divider,
+  Group,
+  ScrollArea,
+  Table,
+  Text,
+  Tooltip,
+} from "@mantine/core";
+import { modals } from "@mantine/modals";
+import { notifications } from "@mantine/notifications";
+import { RefreshCcwIcon, TrashIcon } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Button, Group, ScrollArea, Table, Text, Skeleton } from "@mantine/core";
-import { ActionButtons } from "./action-buttons";
-import { fetchNews } from "../actions/fetch-news";
-import { useRouter } from "next/navigation";
+import { deleteNews } from "@/app/actions/noticias/delete-news";
 
-interface News {
-  id: string;
-  title: string;
-  category: string;
-  publishedAt: string;
-}
-
-export function NewsTable() {
-  const [, setScrolled] = useState(false);
+export default function NewsTable() {
   const [news, setNews] = useState<News[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const router = useRouter();
 
-  // Carrega as notícias
-  const loadNews = async () => {
+  const fetchData = async () => {
     setIsLoading(true);
-    try {
-      const data = await fetchNews();
-      setNews(data);
-    } catch (error) {
-      console.error("Erro ao carregar notícias:", error);
-    } finally {
-      setIsLoading(false);
-    }
+    const news = await getNews(50, 0);
+    setNews(news);
+    setIsLoading(false);
   };
 
   useEffect(() => {
-    loadNews();
+    // Chama a função fetchData ao montar o componente
+    fetchData();
   }, []);
 
-  // Handlers
-  const handleEdit = (id: string) => {
-    // TODO: Implementar navegação para edição
-    router.push(`/dashboard/noticias/editar/${id}`);
-  };
+  const rows = news.map((element) => (
+    <Table.Tr key={element.title}>
+      <Table.Td fw={700}>
+        {element.title.length > 50
+          ? `${element.title.slice(0, 50)}...`
+          : element.title}
+      </Table.Td>
+      <Table.Td>{element.category}</Table.Td>
+      <Table.Td>{new Date(element.publishedAt).toLocaleDateString()}</Table.Td>
+      <Table.Td>
+        <Group justify="center">
+          <Tooltip label="Excluir notícia">
+            <ActionIcon
+              variant="light"
+              color="red"
+              onClick={() => {
+                modals.openConfirmModal({
+                  title: "Excluir notícia",
+                  children: (
+                    <Text size="sm">
+                      Você tem certeza que deseja excluir a notícia{" "}
+                      <strong>{element.title}</strong>?
+                    </Text>
+                  ),
+                  labels: { confirm: "Excluir", cancel: "Cancelar" },
+                  onConfirm: async () => {
+                    setIsLoading(true);
+                    const news = await getNewsByTitle(element.title);
+                    if (!news) {
+                      notifications.show({
+                        title: "Notícia não encontrada",
+                        message: `Nenhuma notícia encontrada com o título: ${element.title}`,
+                        color: "red",
+                      });
+                      return;
+                    }
+                    await deleteNews(news.id);
+                    notifications.show({
+                      title: "Notícia excluída",
+                      message: `A notícia ${element.title} foi excluída com sucesso.`,
+                      color: "green",
+                    });
+                    await fetchData(); // Atualiza a lista de notícias
+                    setIsLoading(false);
+                  },
+                });
+              }}
+            >
+              <TrashIcon size={18} />
+            </ActionIcon>
+          </Tooltip>
+        </Group>
+      </Table.Td>
+    </Table.Tr>
+  ));
 
-  const rows = isLoading
-    ? Array.from({ length: 5 }).map((_, index) => (
-        <Table.Tr key={index}>
-          <Table.Td>
-            <Skeleton height={20} width={100} />
-          </Table.Td>
-          <Table.Td>
-            <Skeleton height={20} width={200} />
-          </Table.Td>
-          <Table.Td>
-            <Skeleton height={20} width={150} />
-          </Table.Td>
-          <Table.Td>
-            <Skeleton height={20} width={120} />
-          </Table.Td>
-          <Table.Td>
-            <Skeleton height={20} width={100} />
-          </Table.Td>
-        </Table.Tr>
-      ))
-    : news.map((item) => (
-        <Table.Tr key={item.id}>
-          <Table.Td>
-            <Text size="sm" c="dimmed">
-              {item.id.substring(0, 8)}...
-            </Text>
-          </Table.Td>
-          <Table.Td>
-            <Text size="sm" fw={500}>
-              {item.title}
-            </Text>
-          </Table.Td>
-          <Table.Td>
-            <Text size="sm">{item.category}</Text>
-          </Table.Td>
-          <Table.Td>
-            <Text size="sm">
-              {new Date(item.publishedAt).toLocaleDateString("pt-BR")}
-            </Text>
-          </Table.Td>
-          <Table.Td>
-            <ActionButtons
-              newsId={item.id}
-              onEdit={handleEdit}
-              onDelete={loadNews}
-            />
-          </Table.Td>
-        </Table.Tr>
-      ));
+  if (isLoading) {
+    return <div>Carregando notícias...</div>;
+  }
 
   return (
     <>
-      <Group justify="flex-end" mb="sm">
-        <Button onClick={loadNews} loading={isLoading} variant="outline" color="blue">
-          Atualizar Lista
-        </Button>
+      <Group align="center" justify="flex-end">
+        <Text size="sm" c="dimmed">
+          Caso você não tenha encontrado a notícia desejada, clique em
+          &quot;Atualizar notícias&quot; para tentar novamente.
+        </Text>
+        <Tooltip label="Atualizar notícias">
+          <Button
+            onClick={fetchData}
+            leftSection={<RefreshCcwIcon size={14} />}
+            variant="default"
+          >
+            Atualizar notícias
+          </Button>
+        </Tooltip>
       </Group>
-      <ScrollArea
-        p={"sm"}
-        h={400}
-        onScrollPositionChange={({ y }) => setScrolled(y !== 0)}
-      >
-        <Table bdrs={"lg"} bd={"solid 1px var(--mantine-color-gray-4)"} miw={700}>
-          <Table.Thead>
+      <Divider my="md" />
+      <ScrollArea offsetScrollbars h={650} px="md" py="xs">
+        <Table verticalSpacing={"md"} withTableBorder withColumnBorders striped>
+          <Table.Thead bg={"blue"} c="white">
             <Table.Tr>
-              <Table.Th>ID</Table.Th>
               <Table.Th>Título</Table.Th>
               <Table.Th>Categoria</Table.Th>
-              <Table.Th>Data de Publicação</Table.Th>
+              <Table.Th>Data</Table.Th>
               <Table.Th>Ações</Table.Th>
             </Table.Tr>
           </Table.Thead>
           <Table.Tbody>{rows}</Table.Tbody>
         </Table>
       </ScrollArea>
+      <Group justify="center" mt="md">
+        <Text size="sm">Atualmente {news.length} notícias cadastradas.</Text>
+      </Group>
     </>
   );
 }

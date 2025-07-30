@@ -22,6 +22,7 @@ import {
 import { usePathname, useRouter } from "next/navigation";
 import { useMediaQuery } from "@mantine/hooks";
 import Image from "next/image";
+import { authClient } from "@/lib/auth-client";
 
 interface NavigationItem {
   label: string;
@@ -54,7 +55,7 @@ export default function Sidebar() {
   const router = useRouter();
   const isMobile = useMediaQuery("(max-width: 768px)");
   const isTablet = useMediaQuery("(max-width: 1024px)");
-  
+
   // Determina se deve colapsar baseado no tamanho da tela
   const shouldCollapse = isMobile || isTablet;
   const sidebarWidth = shouldCollapse ? 80 : 280;
@@ -96,7 +97,7 @@ export default function Sidebar() {
         styles={(theme) => ({
           root: {
             borderRadius: theme.radius.md,
-                marginBottom: rem(4),
+            marginBottom: rem(4),
             borderBottom: "solid 1px var(--mantine-color-gray-4)",
             padding: shouldCollapse ? rem(8) : rem(12),
             transition: "all 0.2s ease",
@@ -148,8 +149,8 @@ export default function Sidebar() {
   return (
     <AppShellNavbar
       w={sidebarWidth}
-          p="md"
-          bg="gray.3"
+      p="md"
+      bg="gray.3"
       style={{
         transition: "width 0.3s ease",
         borderRight: "1px solid var(--mantine-color-gray-4)",
@@ -163,7 +164,12 @@ export default function Sidebar() {
       {/* Header da Sidebar */}
       <Group justify="center" mb="md">
         {!shouldCollapse ? (
-          <Image src={"/images/mt9-logo.svg"} alt="MT9 - Notícias e Comércios" width={70} height={50}/>
+          <Image
+            src={"/images/mt9-logo.svg"}
+            alt="MT9 - Notícias e Comércios"
+            width={70}
+            height={50}
+          />
         ) : (
           <Box
             w={40}
@@ -195,7 +201,7 @@ export default function Sidebar() {
       {/* Footer da Sidebar */}
       <Box mt="auto" pt="md">
         <Divider mb="md" />
-        
+
         {shouldCollapse ? (
           <Tooltip label="Configurações" position="right" withArrow>
             <NavLink
@@ -255,16 +261,12 @@ export default function Sidebar() {
             label="Sair"
             leftSection={<LogOut size={20} />}
             c="red"
-            onClick={() => console.log("Logout")}
-            styles={(theme) => ({
-              root: {
-                borderRadius: theme.radius.md,
-                padding: rem(12),
-                "&:hover": {
-                  backgroundColor: theme.colors.red[0],
-                },
-              },
-            })}
+            bdrs={"md"}
+            p={rem(12)}
+            onClick={async () => {
+              await authClient.signOut();
+              window.location.reload();
+            }}
           />
         )}
       </Box>

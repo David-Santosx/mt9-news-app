@@ -1,129 +1,124 @@
 "use client";
-import { useEffect, useState } from "react";
+
 import {
+  ActionIcon,
   Button,
+  Divider,
   Group,
   ScrollArea,
   Table,
   Text,
-  Skeleton,
+  Tooltip,
 } from "@mantine/core";
-import { ActionButtons } from "./action-buttons"
-import { useRouter } from "next/navigation";
-import { fetchAds } from "../actions/fetch-ads";
+import { modals } from "@mantine/modals";
+import { notifications } from "@mantine/notifications";
+import { RefreshCcwIcon, TrashIcon } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Ads } from "@/lib/schemas/ads-schema";
+import { getAds, getAdsByCampaing } from "@/app/actions/publicidades/get-ads";
+import { deleteAds } from "@/app/actions/publicidades/delete-ads";
 
-interface Ads {
-  id: string;
-  campaing: string;
-  startDate: string;
-  endDate: string;
-}
-
-export function AdsTable() {
-  const [, setScrolled] = useState(false);
+export default function AdsTable() {
   const [ads, setAds] = useState<Ads[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const router = useRouter();
 
-  // Carrega as publicidades
-  const loadAds = async () => {
+  const fetchData = async () => {
     setIsLoading(true);
-    try {
-      const data = await fetchAds();
-      setAds(data);
-    } catch (error) {
-      console.error("Erro ao carregar publicidades:", error);
-    } finally {
-      setIsLoading(false);
-    }
+    const ads = await getAds();
+    setAds(ads);
+    setIsLoading(false);
   };
 
   useEffect(() => {
-    loadAds();
+    // Chama a função fetchData ao montar o componente
+    fetchData();
   }, []);
 
-  // Handlers
-  const handleEdit = (id: string) => {
-    // TODO: Implementar navegação para edição
-    router.push(`/dashboard/publicidades/editar/${id}`);
-  };
+  const rows = ads.map((element) => (
+    <Table.Tr key={element.campaing}>
+      <Table.Td fw={700}>
+        {element.campaing.length > 50
+          ? `${element.campaing.slice(0, 50)}...`
+          : element.campaing}
+      </Table.Td>
+      <Table.Td>{element.position}</Table.Td>
+      <Table.Td>{new Date(element.startDate).toLocaleDateString()}</Table.Td>
+      <Table.Td>{new Date(element.endDate).toLocaleDateString()}</Table.Td>
+      <Table.Td>
+        <Group justify="center">
+          <Tooltip label="Excluir anúncio">
+            <ActionIcon
+              variant="light"
+              color="red"
+              onClick={() => {
+                modals.openConfirmModal({
+                  title: "Excluir anúncio",
+                  children: (
+                    <Text size="sm">
+                      Você tem certeza que deseja excluir o anúncio{" "}
+                      <strong>{element.campaing}</strong>?
+                    </Text>
+                  ),
+                  labels: { confirm: "Excluir", cancel: "Cancelar" },
+                  onConfirm: async () => {
+                    setIsLoading(true);
+                    const ads = await getAdsByCampaing(element.campaing);
+                    if (!ads) {
+                      notifications.show({
+                        title: "Anúncio não encontrado",
+                        message: `Nenhum anúncio encontrado com o título: ${element.campaing}`,
+                        color: "red",
+                      });
+                      return;
+                    }
+                    await deleteAds(ads.id);
+                    notifications.show({
+                      title: "Anúncio excluído",
+                      message: `O anúncio ${element.campaing} foi excluído com sucesso.`,
+                      color: "green",
+                    });
+                    await fetchData(); // Atualiza a lista de notícias
+                    setIsLoading(false);
+                  },
+                });
+              }}
+            >
+              <TrashIcon size={18} />
+            </ActionIcon>
+          </Tooltip>
+        </Group>
+      </Table.Td>
+    </Table.Tr>
+  ));
 
-  const rows = isLoading
-    ? Array.from({ length: 5 }).map((_, index) => (
-        <Table.Tr key={index}>
-          <Table.Td>
-            <Skeleton height={20} width={100} />
-          </Table.Td>
-          <Table.Td>
-            <Skeleton height={20} width={200} />
-          </Table.Td>
-          <Table.Td>
-            <Skeleton height={20} width={150} />
-          </Table.Td>
-          <Table.Td>
-            <Skeleton height={20} width={120} />
-          </Table.Td>
-          <Table.Td>
-            <Skeleton height={20} width={100} />
-          </Table.Td>
-        </Table.Tr>
-      ))
-    : ads.map((item) => (
-        <Table.Tr key={item.id}>
-          <Table.Td>
-            <Text size="sm" c="dimmed">
-              {item.id.substring(0, 8)}...
-            </Text>
-          </Table.Td>
-          <Table.Td>
-            <Text size="sm" fw={500}>
-              {item.campaing}
-            </Text>
-          </Table.Td>
-          <Table.Td>
-            <Text size="sm">{new Date(item.startDate).toLocaleDateString("pt-br")}</Text>
-          </Table.Td>
-          <Table.Td>
-            <Text size="sm">
-              {new Date(item.endDate).toLocaleDateString("pt-BR")}
-            </Text>
-          </Table.Td>
-          <Table.Td>
-            <ActionButtons
-              adsId={item.id}
-              onEdit={handleEdit}
-              onDelete={loadAds}
-            />
-          </Table.Td>
-        </Table.Tr>
-      ));
+  if (isLoading) {
+    return <div>Carregando anúncios...</div>;
+  }
 
   return (
     <>
-      <Group justify="flex-end" mb="sm">
-        <Button
-          onClick={loadAds}
-          loading={isLoading}
-          variant="outline"
-          color="blue"
-        >
-          Atualizar Lista
-        </Button>
+      <Group align="center" justify="flex-end">
+        <Text size="sm" c="dimmed">
+          Caso você não tenha encontrado o anúncio desejado, clique em
+          &quot;Atualizar anúncios&quot; para tentar novamente.
+        </Text>
+        <Tooltip label="Atualizar anúncios">
+          <Button
+            onClick={fetchData}
+            leftSection={<RefreshCcwIcon size={14} />}
+            variant="default"
+          >
+            Atualizar anúncios
+          </Button>
+        </Tooltip>
       </Group>
-      <ScrollArea
-        p={"sm"}
-        h={400}
-        onScrollPositionChange={({ y }) => setScrolled(y !== 0)}
-      >
-        <Table
-          bdrs={"lg"}
-          bd={"solid 1px var(--mantine-color-gray-4)"}
-          miw={700}
-        >
-          <Table.Thead>
+      <Divider my="md" />
+      <ScrollArea offsetScrollbars h={650} px="md" py="xs">
+        <Table verticalSpacing={"md"} withTableBorder withColumnBorders striped>
+          <Table.Thead bg={"blue"} c="white">
             <Table.Tr>
-              <Table.Th>ID</Table.Th>
               <Table.Th>Campanha</Table.Th>
+              <Table.Th>Posição</Table.Th>
               <Table.Th>Data de Início</Table.Th>
               <Table.Th>Data de Fim</Table.Th>
               <Table.Th>Ações</Table.Th>
@@ -132,6 +127,9 @@ export function AdsTable() {
           <Table.Tbody>{rows}</Table.Tbody>
         </Table>
       </ScrollArea>
+      <Group justify="center" mt="md">
+        <Text size="sm">Atualmente {ads.length} anúncios cadastrados.</Text>
+      </Group>
     </>
   );
 }
