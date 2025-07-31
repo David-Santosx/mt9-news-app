@@ -91,8 +91,8 @@ model News {
 }
 
 enum AdPosition {
-  HEADER     // 728x90
-  HIGHLIGHT  // 300x250
+  HEADER   // 728x90
+  HIGHLIGHT // 300x250
 }
 
 model Advertisement {
