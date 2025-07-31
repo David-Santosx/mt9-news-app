@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { AdPositionList } from "@/lib/schemas/ads-schema";
-import { Advertisement as PrismaAds } from "@prisma/client";
+import { Advertisement as PrismaAds } from "@/../prisma/generated";
 import { getPublicAds } from "../actions/publicidades/get-ads";
 
 export default function AdDisplay({

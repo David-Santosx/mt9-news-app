@@ -1,6 +1,6 @@
 "use client";
 import { Carousel, CarouselSlide } from "@mantine/carousel";
-import { News } from "@prisma/client";
+import { News } from "@/../prisma/generated";
 import { useEffect, useRef, useState } from "react";
 import { getPublicNews } from "../actions/noticias/get-news";
 import { notifications } from "@mantine/notifications";

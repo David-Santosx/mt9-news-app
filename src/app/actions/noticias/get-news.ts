@@ -1,7 +1,7 @@
 "use server";
 import { withCache } from "@/lib/cache";
 import { prisma } from "@/lib/prisma";
-import { News as PrismaNews } from "@prisma/client";
+import { News as PrismaNews } from "@/../prisma/generated";
 import slugify from "slugify";
 
 /**

@@ -1,15 +1,12 @@
-import { AdPosition } from "@prisma/client";
+import { AdPosition } from "@/../prisma/generated";
 import { z } from "zod";
 
 // Lista de categorias para ser usada tanto no schema quanto no formulário
-export const AdPositionList = [
-  AdPosition.HEADER,
-  AdPosition.HIGHLIGHT,
-];
+export const AdPositionList = [AdPosition.HEADER, AdPosition.HIGHLIGHT];
 
 export const adsSchema = z.object({
   campaing: z.string().min(5, "A campanha deve ter pelo menos 5 caracteres"),
-  startDate:z
+  startDate: z
     .date()
     .optional()
     .default(() => new Date()),
@@ -46,8 +43,10 @@ export const adsSchema = z.object({
       }
     )
     .optional(),
-    link: z.string().url("Deve ser uma URL válida").optional().nullable(),
-    position: z.enum([AdPosition.HEADER, AdPosition.HIGHLIGHT]).default(AdPosition.HEADER),
+  link: z.string().url("Deve ser uma URL válida").optional().nullable(),
+  position: z
+    .enum([AdPosition.HEADER, AdPosition.HIGHLIGHT])
+    .default(AdPosition.HEADER),
 });
 
 export type Ads = z.infer<typeof adsSchema>;

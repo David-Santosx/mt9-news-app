@@ -20,7 +20,7 @@ import {
   GridCol,
   Center,
 } from "@mantine/core";
-import { News as PrismaNews } from "@prisma/client";
+import { News as PrismaNews } from "@/../prisma/generated";
 import { Suspense } from "react";
 import { ArrowLeft, Clock } from "lucide-react";
 import Link from "next/link";
