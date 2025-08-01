@@ -5,7 +5,7 @@
   "author": {"name": "David Santos"},
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && next build && prisma migrate deploy",
+    "build": "prisma generate && prisma migrate resolve --applied 20250716225916_add_ad_position && next build && prisma migrate deploy",
     "start": "next start",
     "lint": "next lint"
   },
