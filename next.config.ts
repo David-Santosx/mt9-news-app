@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 const { PrismaPlugin } = require("@prisma/nextjs-monorepo-workaround-plugin");
 
 const nextConfig: NextConfig = {
+  output: "standalone", // Modo otimizado para reduzir tamanho do deploy
   experimental: {
     optimizePackageImports: [
       "@mantine/core",
@@ -15,12 +16,17 @@ const nextConfig: NextConfig = {
   webpack: (config, { isServer }) => {
     if (isServer) {
       config.plugins = [...config.plugins, new PrismaPlugin()];
+
+      // Otimização para reduzir o tamanho do serverless bundle
+      // Evita duplicação dos engines do Prisma
+      config.externals = [...(config.externals || []), "@prisma/engines"];
     }
     return config;
   },
   compress: true,
   poweredByHeader: false,
   generateEtags: false,
+
   async headers() {
     return [
       {

@@ -1,0 +1,21 @@
+# Diretórios de desenvolvimento
+node_modules
+.git
+.github
+.vscode
+
+# Arquivos desnecessários para produção
+README.md
+.eslintrc*
+.prettierrc*
+.gitignore
+docker-compose.yml
+docker/
+
+# Prisma - evitar arquivos duplicados
+prisma/migrations
+*.log
+
+# Arquivos de teste
+**/*.test.*
+**/*.spec.*
