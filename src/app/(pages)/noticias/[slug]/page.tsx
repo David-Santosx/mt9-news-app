@@ -242,11 +242,22 @@ export default async function Page({
           radius="lg"
           className="prose prose-lg max-w-none bg-white"
         >
-          {news.content.split("\\n").map((paragraph, index) => (
-            <Text key={index} className="mb-6 leading-relaxed" size="lg">
-              {paragraph}
-            </Text>
-          ))}
+          {news.content
+            .split("\\n")
+            .filter((paragraph) => paragraph.trim().length > 0)
+            .map((paragraph, index) => (
+              <Text
+                key={index}
+                className="mb-8 leading-relaxed"
+                size="lg"
+                style={{
+                  textIndent: "2rem",
+                  marginBottom: index === 0 ? "2rem" : "1.5rem",
+                }}
+              >
+                {paragraph.trim()}
+              </Text>
+            ))}
         </Paper>
 
         {/* Tags e Metadados */}
