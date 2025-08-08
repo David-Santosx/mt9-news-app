@@ -14,6 +14,7 @@ import "@mantine/carousel/styles.css";
 import { Notifications } from "@mantine/notifications";
 import { ModalsProvider } from "@mantine/modals";
 import type { Metadata } from "next";
+import { seedAdminUser } from "./actions/admin/seed";
 
 const rubik = Rubik({
   variable: "--font-rubik",
@@ -77,6 +78,18 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Seed para criar usuário admin
+  async function initializeAdminUser() {
+    try {
+      await seedAdminUser();
+    } catch (error) {
+      console.error("Erro ao criar usuário admin:", error);
+    }
+  }
+
+  // Chama a função para criar o usuário admin
+  initializeAdminUser();
+
   return (
     <html lang="pt-br" {...mantineHtmlProps}>
       <head>
