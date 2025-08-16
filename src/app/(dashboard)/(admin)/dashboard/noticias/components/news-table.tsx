@@ -24,8 +24,13 @@ export default function NewsTable() {
 
   const fetchData = async () => {
     setIsLoading(true);
-    const news = await getNews(50, 0);
-    setNews(news);
+    const newsData = await getNews(50, 0);
+    const mappedNews = newsData.map((item) => ({
+      ...item,
+      source: item.source ?? undefined,
+      imageSource: item.imageSource ?? undefined,
+    }));
+    setNews(mappedNews);
     setIsLoading(false);
   };
 
