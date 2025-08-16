@@ -264,6 +264,7 @@ export default function NewsCategoriesSection() {
                   variant="gradient"
                   gradient={{ from: "#E1306C", to: "#F77737", deg: 45 }}
                   component={Link}
+                  target="_blank"
                   href="https://www.instagram.com/mt9.com.br"
                   style={{
                     transition: "transform 0.2s ease",
