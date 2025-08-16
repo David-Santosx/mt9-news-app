@@ -22,6 +22,8 @@ export const NewsCategories = [
 export const newsSchema = z.object({
   title: z.string().min(5, "O título deve ter pelo menos 5 caracteres"),
   subtitle: z.string().default("").nullable(),
+  source: z.string().optional(),
+  imageSource: z.string().optional(),
   category: z
     .string()
     .refine((value) => NewsCategories.includes(value), {
@@ -61,7 +63,7 @@ export const newsSchema = z.object({
     )
     .optional(),
   publishedAt: z
-    .date({message: "Data inválida"})
+    .date({ message: "Data inválida" })
     .optional()
     .default(() => new Date()),
 });

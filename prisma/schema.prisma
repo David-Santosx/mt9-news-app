@@ -80,6 +80,8 @@ model News {
   id String @id @default(cuid())
   title String @unique
   slug String @unique
+  source String?
+  imageSource String?
   subtitle String?
   publisher String
   tags String[]

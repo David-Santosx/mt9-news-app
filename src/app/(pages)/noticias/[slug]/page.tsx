@@ -234,6 +234,23 @@ export default async function Page({
             height={600}
             className="w-full object-cover hover:scale-105 transition-transform duration-700"
           />
+          <Stack
+            gap={0}
+            px="md"
+            py="xs"
+            style={{ borderTop: "1px solid #eee" }}
+          >
+            {news.source && (
+              <Text size="sm" c="dimmed" className="italic text-right">
+                Fonte: {news.source}
+              </Text>
+            )}
+            {news.imageSource && (
+              <Text size="sm" c="dimmed" className="italic text-right">
+                Créditos da imagem: {news.imageSource}
+              </Text>
+            )}
+          </Stack>
         </Paper>
 
         {/* Conteúdo */}

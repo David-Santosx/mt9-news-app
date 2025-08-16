@@ -46,6 +46,8 @@ export async function createNews(data: News) {
         publisher: data.publisher,
         publishedAt: new Date(data.publishedAt),
         image: imageUrl,
+        source: data.source || null,
+        imageSource: data.imageSource || null,
       },
     });
 

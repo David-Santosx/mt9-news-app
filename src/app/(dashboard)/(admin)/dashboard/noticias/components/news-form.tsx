@@ -29,6 +29,8 @@ export default function NewsForm() {
       publisher: "Da Redação",
       publishedAt: new Date(),
       image: undefined as File | undefined, // Inicialmente sem imagem
+      source: "",
+      imageSource: "",
     },
     validate: zod4Resolver(newsSchema), // Validação usando o schema Zod
     mode: "controlled",
@@ -152,6 +154,20 @@ export default function NewsForm() {
           label="Publicador"
           placeholder="Quem publicou?"
           {...form.getInputProps("publisher")}
+          size="md"
+        />
+        <TextInput
+          key={form.key("source")}
+          label="Fonte"
+          placeholder="Digite a fonte da notícia (opcional)"
+          {...form.getInputProps("source")}
+          size="md"
+        />
+        <TextInput
+          key={form.key("imageSource")}
+          label="Fonte da Imagem"
+          placeholder="Digite a fonte da imagem (opcional)"
+          {...form.getInputProps("imageSource")}
           size="md"
         />
         <FileInput

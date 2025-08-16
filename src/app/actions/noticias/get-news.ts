@@ -147,6 +147,23 @@ export async function getNewsBySlug(slug: string): Promise<PrismaNews | null> {
       where: {
         slug: slug,
       },
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        subtitle: true,
+        source: true,
+        imageSource: true,
+        publisher: true,
+        tags: true,
+        category: true,
+        slugCategory: true,
+        content: true,
+        publishedAt: true,
+        image: true,
+        createdAt: true,
+        updatedAt: true,
+      },
     });
     return news;
   } catch (error) {
