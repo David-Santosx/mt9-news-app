@@ -4,19 +4,20 @@ import { useForm } from "@mantine/form";
 import {
   TextInput,
   Select,
-  Textarea,
   FileInput,
   Button,
   Image,
   Stack,
   Group,
   TagsInput,
+  Text,
 } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
 import { newsSchema, NewsCategories, News } from "@/lib/schemas/news-schema";
 import { zod4Resolver } from "mantine-form-zod-resolver";
 import { notifications } from "@mantine/notifications";
 import { createNews } from "@/app/actions/noticias/create-news";
+import { TipTapEditor } from "@/app/components/tip-tap-editor";
 
 export default function NewsForm() {
   const form = useForm<News>({
@@ -129,16 +130,16 @@ export default function NewsForm() {
             size="md"
           />
         </Group>
-        <Textarea
-          key={form.key("content")}
-          withAsterisk
-          label="Conteúdo"
-          placeholder="Escreva o conteúdo da notícia"
-          minRows={5}
-          autosize
-          size="md"
-          {...form.getInputProps("content")}
-        />
+        <Stack gap="xs">
+          <Text fw={500} size="sm" style={{ marginBottom: -8 }}>
+            Conteúdo{" "}
+            <span style={{ color: "var(--mantine-color-red-6)" }}>*</span>
+          </Text>
+          <TipTapEditor
+            value={form.values.content}
+            onChange={(value) => form.setFieldValue("content", value)}
+          />
+        </Stack>
         <TagsInput
           clearable
           key={form.key("tags")}

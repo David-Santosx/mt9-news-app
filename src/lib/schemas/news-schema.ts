@@ -30,7 +30,10 @@ export const newsSchema = z.object({
       message: "Categoria inválida",
     })
     .default("Geral"),
-  content: z.string().min(20, "O conteúdo deve ter pelo menos 20 caracteres"),
+  content: z
+    .string()
+    .min(20, "O conteúdo deve ter pelo menos 20 caracteres")
+    .transform((str) => str.trim()),
   tags: z
     .array(z.string())
     .min(1, "Adicione pelo menos uma palavra-chave (tag)"),

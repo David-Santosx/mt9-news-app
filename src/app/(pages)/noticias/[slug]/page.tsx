@@ -157,7 +157,7 @@ export default async function Page({
 
   return (
     <Box bg="gray.0" py="xl">
-      <Container size="xl">
+      <Container size="lg">
         <Stack gap="xl"></Stack>
         {/* Navegação e Data */}
         <Group justify="space-between" align="center">
@@ -227,7 +227,12 @@ export default async function Page({
         </Paper>
 
         {/* Imagem Principal */}
-        <Paper shadow="md" radius="lg" className="overflow-hidden" withBorder>
+        <Paper
+          shadow="md"
+          radius="lg"
+          className="overflow-hidden mb-2"
+          withBorder
+        >
           <Image
             src={news.image as string}
             alt={news.title}
@@ -256,26 +261,14 @@ export default async function Page({
 
         {/* Conteúdo */}
         <Paper
-          p="xl"
+          p="sm"
           radius="lg"
-          className="prose prose-lg max-w-none bg-white"
+          className="prose prose-lg max-w-none bg-white prose-headings:text-blue-900 prose-headings:font-bold prose-p:text-gray-700 prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline prose-strong:text-gray-900 prose-blockquote:border-blue-500 prose-blockquote:bg-blue-50 prose-blockquote:py-2 prose-blockquote:px-4 prose-blockquote:rounded-r-lg prose-blockquote:not-italic prose-img:rounded-lg prose-img:shadow-md"
         >
-          {news.content
-            .split("\\n")
-            .filter((paragraph) => paragraph.trim().length > 0)
-            .map((paragraph, index) => (
-              <Text
-                key={index}
-                className="mb-8 leading-relaxed"
-                size="lg"
-                style={{
-                  textIndent: "2rem",
-                  marginBottom: index === 0 ? "2rem" : "1.5rem",
-                }}
-              >
-                {paragraph.trim()}
-              </Text>
-            ))}
+          <div
+            className="leading-relaxed text-lg"
+            dangerouslySetInnerHTML={{ __html: news.content }}
+          />
         </Paper>
 
         {/* Tags e Metadados */}

@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 /* Estilos para o conteúdo das notícias */
 /* Estilo para parágrafos de notícias */
