@@ -57,7 +57,7 @@ export async function getNewsByCategory(
       take: limit,
       skip: skip,
     });
-    return console.log(`Buscando notícias para a categoria: ${category}`), news;
+    return news;
   } catch (error) {
     if (error instanceof Error) {
       throw new Error(`${error.message}`);
