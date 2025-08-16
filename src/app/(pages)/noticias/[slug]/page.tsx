@@ -25,6 +25,7 @@ import { Suspense } from "react";
 import { ArrowLeft, Clock } from "lucide-react";
 import Link from "next/link";
 import AdDisplay from "@/app/components/ad-display";
+import ShareButtons from "@/app/components/share-buttons";
 import { Metadata } from "next";
 
 type PageProps = {
@@ -285,25 +286,31 @@ export default async function Page({
           withBorder
           className="bg-gradient-to-br from-gray-50 to-white"
         >
-          <Stack gap="md">
-            <Text size="sm" fw={600} c="dimmed">
-              TAGS RELACIONADAS
-            </Text>
-            <Group gap="xs">
-              {news.tags
-                ?.filter((tag) => tag.trim().length > 0)
-                .map((tag) => (
-                  <Badge
-                    key={tag}
-                    variant="light"
-                    size="lg"
-                    radius="md"
-                    className="hover:scale-105 transition-transform duration-200"
-                  >
-                    {tag.trim()}
-                  </Badge>
-                ))}
-            </Group>
+          <Stack gap="xl">
+            {/* Tags */}
+            <Stack gap="md">
+              <Text size="sm" fw={600} c="dimmed">
+                TAGS RELACIONADAS
+              </Text>
+              <Group gap="xs">
+                {news.tags
+                  ?.filter((tag) => tag.trim().length > 0)
+                  .map((tag) => (
+                    <Badge
+                      key={tag}
+                      variant="light"
+                      size="lg"
+                      radius="md"
+                      className="hover:scale-105 transition-transform duration-200"
+                    >
+                      {tag.trim()}
+                    </Badge>
+                  ))}
+              </Group>
+            </Stack>
+
+            {/* Compartilhamento */}
+            <ShareButtons title={news.title} />
           </Stack>
         </Paper>
 
