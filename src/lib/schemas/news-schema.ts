@@ -66,7 +66,8 @@ export const newsSchema = z.object({
     )
     .optional(),
   publishedAt: z
-    .date({ message: "Data inválida" })
+    .union([z.date(), z.string().datetime()])
+    .transform((val) => new Date(val))
     .optional()
     .default(() => new Date()),
 });

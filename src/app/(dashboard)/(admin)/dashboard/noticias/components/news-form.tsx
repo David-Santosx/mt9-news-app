@@ -128,6 +128,17 @@ export default function NewsForm() {
             valueFormat="DD/MM/YYYY"
             {...form.getInputProps("publishedAt")}
             size="md"
+            clearable={false}
+            firstDayOfWeek={0}
+            locale="pt-BR"
+            // Ensure the date is properly set at midnight to avoid timezone issues
+            onChange={(newDate) => {
+              if (newDate) {
+                const date = new Date(newDate);
+                date.setHours(0, 0, 0, 0);
+                form.setFieldValue("publishedAt", date);
+              }
+            }}
           />
         </Group>
         <Stack gap="xs">

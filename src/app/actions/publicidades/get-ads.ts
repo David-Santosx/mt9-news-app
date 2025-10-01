@@ -15,7 +15,7 @@ export async function getAds(): Promise<PrismaAds[]> {
         createdAt: "desc",
       },
     });
-    return ads;
+    return ads || [];
   } catch (error) {
     if (error instanceof Error) {
       throw new Error(`${error.message}`);
@@ -41,7 +41,7 @@ export async function getAdsByPosition(
         position: position,
       },
     });
-    return ads;
+    return ads || [];
   } catch (error) {
     if (error instanceof Error) {
       throw new Error(`${error.message}`);
@@ -50,21 +50,22 @@ export async function getAdsByPosition(
   }
 }
 
-
 /**
  * Busca um anúncio por campanha.
  * @param campaing - Nome da campanha do anúncio a ser buscado.
  * @returns Anúncio correspondente ou null se não encontrado.
  * @throws Erro ao buscar anúncio por campanha.
  */
-export async function getAdsByCampaing(campaing: string): Promise<PrismaAds | null> {
+export async function getAdsByCampaing(
+  campaing: string
+): Promise<PrismaAds | null> {
   try {
     const ad = await prisma.advertisement.findUnique({
       where: {
         campaing: campaing,
       },
     });
-    return ad;
+    return ad || null;
   } catch (error) {
     if (error instanceof Error) {
       throw new Error(`${error.message}`);
