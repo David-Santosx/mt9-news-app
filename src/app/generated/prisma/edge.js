@@ -248,6 +248,7 @@ const config = {
   ],
   "activeProvider": "postgresql",
   "postinstall": false,
+  "ciName": "Vercel",
   "inlineDatasources": {
     "db": {
       "url": {
