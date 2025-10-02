@@ -25,15 +25,9 @@ export async function uploadToS3(file: File, bucket: string): Promise<string> {
     })
   );
 
-  // Constrói a URL pública base removendo o caminho específico do S3 para produção
-  if (process.env.NODE_ENV === "production") {
-    const publicUrlBase = (process.env.S3_ENDPOINT || "").replace(
-      /\/storage\/v1\/s3$/,
-      ""
-    );
+  // Formato esperado da URL: http://127.0.0.1:54321/storage/v1/object/public/news-images//ca0f6dbe7c694385e82fe010313c059a.jpg
+  const endpoint = process.env.S3_ENDPOINT?.replace("/s3", "/object/public") || "http://localhost:9000/object/public";
 
-    return `${publicUrlBase}/storage/v1/object/public/${bucket}/${filename}`;
-  }
-  // Em desenvolvimento, retorna a URL diretamente do endpoint S3
-  return `${process.env.S3_ENDPOINT}/${bucket}/${filename}`;
+  // Retorna a URL pública do arquivo enviado
+  return `${endpoint}/${bucket}/${filename}`;
 }

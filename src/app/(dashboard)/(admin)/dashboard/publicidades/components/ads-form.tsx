@@ -121,6 +121,17 @@ export default function AdsForm() {
             valueFormat="DD/MM/YYYY"
             {...form.getInputProps("startDate")}
             size="md"
+            clearable={false}
+            firstDayOfWeek={0}
+            locale="pt-BR"
+            // Ensure the date is properly set at midnight to avoid timezone issues
+            onChange={(newDate) => {
+              if (newDate) {
+                const date = new Date(newDate);
+                date.setHours(0, 0, 0, 0);
+                form.setFieldValue("publishedAt", date);
+              }
+            }}
           />
           <DateInput
             key={form.key("endDate")}
@@ -130,6 +141,17 @@ export default function AdsForm() {
             valueFormat="DD/MM/YYYY"
             {...form.getInputProps("endDate")}
             size="md"
+            clearable={false}
+            firstDayOfWeek={0}
+            locale="pt-BR"
+            // Ensure the date is properly set at midnight to avoid timezone issues
+            onChange={(newDate) => {
+              if (newDate) {
+                const date = new Date(newDate);
+                date.setHours(0, 0, 0, 0);
+                form.setFieldValue("publishedAt", date);
+              }
+            }}
           />
         </Group>
 

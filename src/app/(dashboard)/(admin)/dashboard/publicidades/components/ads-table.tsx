@@ -6,6 +6,7 @@ import {
   Divider,
   Group,
   ScrollArea,
+  Stack,
   Table,
   Text,
   Tooltip,
@@ -113,20 +114,47 @@ export default function AdsTable() {
         </Tooltip>
       </Group>
       <Divider my="md" />
-      <ScrollArea offsetScrollbars h={650} px="md" py="xs">
-        <Table verticalSpacing={"md"} withTableBorder withColumnBorders striped>
-          <Table.Thead bg={"blue"} c="white">
-            <Table.Tr>
-              <Table.Th>Campanha</Table.Th>
-              <Table.Th>Posição</Table.Th>
-              <Table.Th>Data de Início</Table.Th>
-              <Table.Th>Data de Fim</Table.Th>
-              <Table.Th>Ações</Table.Th>
-            </Table.Tr>
-          </Table.Thead>
-          <Table.Tbody>{rows}</Table.Tbody>
-        </Table>
-      </ScrollArea>
+      {ads.length === 0 ? (
+        <Group justify="center" py={100}>
+          <Stack align="center" gap="xs">
+            <Text size="xl" fw={700} c="dimmed">
+              Nenhum anúncio encontrado
+            </Text>
+            <Text size="sm" c="dimmed" ta="center">
+              Não há anúncios cadastrados no sistema. Clique em &quot;Criar
+              anúncio&quot; para adicionar um novo.
+            </Text>
+            <Button
+              onClick={fetchData}
+              leftSection={<RefreshCcwIcon size={14} />}
+              variant="outline"
+              mt="md"
+            >
+              Atualizar anúncios
+            </Button>
+          </Stack>
+        </Group>
+      ) : (
+        <ScrollArea offsetScrollbars h={650} px="md" py="xs">
+          <Table
+            verticalSpacing={"md"}
+            withTableBorder
+            withColumnBorders
+            striped
+          >
+            <Table.Thead bg={"blue"} c="white">
+              <Table.Tr>
+                <Table.Th>Campanha</Table.Th>
+                <Table.Th>Posição</Table.Th>
+                <Table.Th>Data de Início</Table.Th>
+                <Table.Th>Data de Fim</Table.Th>
+                <Table.Th>Ações</Table.Th>
+              </Table.Tr>
+            </Table.Thead>
+            <Table.Tbody>{rows}</Table.Tbody>
+          </Table>
+        </ScrollArea>
+      )}
       <Group justify="center" mt="md">
         <Text size="sm">Atualmente {ads.length} anúncios cadastrados.</Text>
       </Group>

@@ -8,6 +8,7 @@ import {
   Divider,
   Group,
   ScrollArea,
+  Stack,
   Table,
   Text,
   Tooltip,
@@ -117,19 +118,46 @@ export default function NewsTable() {
         </Tooltip>
       </Group>
       <Divider my="md" />
-      <ScrollArea offsetScrollbars h={650} px="md" py="xs">
-        <Table verticalSpacing={"md"} withTableBorder withColumnBorders striped>
-          <Table.Thead bg={"blue"} c="white">
-            <Table.Tr>
-              <Table.Th>Título</Table.Th>
-              <Table.Th>Categoria</Table.Th>
-              <Table.Th>Data</Table.Th>
-              <Table.Th>Ações</Table.Th>
-            </Table.Tr>
-          </Table.Thead>
-          <Table.Tbody>{rows}</Table.Tbody>
-        </Table>
-      </ScrollArea>
+      {news.length === 0 ? (
+        <Group justify="center" py={100}>
+          <Stack align="center" gap="xs">
+            <Text size="xl" fw={700} c="dimmed">
+              Nenhuma notícia encontrada
+            </Text>
+            <Text size="sm" c="dimmed" ta="center">
+              Não há notícias cadastradas no sistema. Clique em &quot;Criar
+              notícia&quot; para adicionar uma nova.
+            </Text>
+            <Button
+              onClick={fetchData}
+              leftSection={<RefreshCcwIcon size={14} />}
+              variant="outline"
+              mt="md"
+            >
+              Atualizar notícias
+            </Button>
+          </Stack>
+        </Group>
+      ) : (
+        <ScrollArea offsetScrollbars h={650} px="md" py="xs">
+          <Table
+            verticalSpacing={"md"}
+            withTableBorder
+            withColumnBorders
+            striped
+          >
+            <Table.Thead bg={"blue"} c="white">
+              <Table.Tr>
+                <Table.Th>Título</Table.Th>
+                <Table.Th>Categoria</Table.Th>
+                <Table.Th>Data</Table.Th>
+                <Table.Th>Ações</Table.Th>
+              </Table.Tr>
+            </Table.Thead>
+            <Table.Tbody>{rows}</Table.Tbody>
+          </Table>
+        </ScrollArea>
+      )}
       <Group justify="center" mt="md">
         <Text size="sm">Atualmente {news.length} notícias cadastradas.</Text>
       </Group>

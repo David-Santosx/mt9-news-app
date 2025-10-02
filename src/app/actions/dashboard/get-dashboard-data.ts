@@ -50,6 +50,8 @@ export const getDashboardData = async (): Promise<DashboardData> => {
   }
 };
 
-export const getDashboardDataCached = withCache(getDashboardData, [
-  "dashboard-data",
-]);
+export const getDashboardDataCached = withCache(
+  getDashboardData,
+  ["dashboard-data"],
+  { revalidate: 30 } // Dashboard pode ter um cache um pouco maior por ser menos crítico
+);

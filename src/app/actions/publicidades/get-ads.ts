@@ -1,7 +1,7 @@
 "use server";
 import { withCache } from "@/lib/cache";
 import { prisma } from "@/lib/prisma";
-import { AdPosition, Advertisement as PrismaAds } from "@/../prisma/generated";
+import { AdPosition, Advertisement as PrismaAds } from "@/app/generated/prisma";
 
 /**
  * Busca todos os anúncios.
@@ -74,4 +74,8 @@ export async function getAdsByCampaing(
   }
 }
 
-export const getPublicAds = withCache(getAds, ["public-ads"]);
+export const getPublicAds = withCache(
+  getAds,
+  ["public-ads"],
+  { revalidate: 15 } // Revalidar a cada 15 segundos
+);

@@ -20,7 +20,7 @@ import {
   GridCol,
   Center,
 } from "@mantine/core";
-import { News as PrismaNews } from "@/../prisma/generated";
+import { News as PrismaNews } from "@/app/generated/prisma";
 import { Suspense } from "react";
 import { ArrowLeft, Clock } from "lucide-react";
 import Link from "next/link";
@@ -157,7 +157,7 @@ export default async function Page({
 
   return (
     <Box bg="gray.0" py="xl">
-      <Container size="lg">
+      <Container size="lg" className="overflow-hidden">
         <Stack gap="xl"></Stack>
         {/* Navegação e Data */}
         <Group justify="space-between" align="center">
@@ -230,16 +230,23 @@ export default async function Page({
         <Paper
           shadow="md"
           radius="lg"
-          className="overflow-hidden mb-2"
+          className="overflow-hidden mb-2 w-full"
           withBorder
+          p={0}
+          style={{
+            maxWidth: "100vw",
+            margin: "0 -16px", // Expande além do container
+            width: "calc(100% + 32px)", // Compensa as margens negativas
+          }}
         >
-          <Image
-            src={news.image as string}
-            alt={news.title}
-            fallbackSrc="https://placehold.co/800x500?text=Carregando+imagem..."
-            height={600}
-            className="w-full object-cover hover:scale-105 transition-transform duration-700"
-          />
+          <Box className="relative aspect-[16/9]">
+            <Image
+              src={news.image as string}
+              alt={news.title}
+              fallbackSrc="https://placehold.co/1600x900?text=Carregando+imagem..."
+              className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+            />
+          </Box>
           <Stack
             gap={0}
             px="md"

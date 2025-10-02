@@ -1,7 +1,7 @@
 "use server";
 import { withCache } from "@/lib/cache";
 import { prisma } from "@/lib/prisma";
-import { News as PrismaNews } from "@/../prisma/generated";
+import { News as PrismaNews } from "@/app/generated/prisma";
 import slugify from "slugify";
 
 /**
@@ -174,16 +174,32 @@ export async function getNewsBySlug(slug: string): Promise<PrismaNews | null> {
   }
 }
 
-export const getPublicNews = withCache(getNews, ["public-news"]);
-export const getPublicNewsByCategory = withCache(getNewsByCategory, [
-  "public-news-by-category",
-]);
-export const getPublicNewsByTitle = withCache(getNewsByTitle, [
-  "public-news-by-title",
-]);
-export const getPublicNewsBySlug = withCache(getNewsBySlug, [
-  "public-news-by-slug",
-]);
-export const getPublicNewsByCategorySlug = withCache(getNewsByCategorySlug, [
-  "public-news-by-category-slug",
-]);
+export const getPublicNews = withCache(
+  getNews,
+  ["public-news"],
+  { revalidate: 15 } // Revalidar a cada 15 segundos
+);
+
+export const getPublicNewsByCategory = withCache(
+  getNewsByCategory,
+  ["public-news-by-category"],
+  { revalidate: 15 }
+);
+
+export const getPublicNewsByTitle = withCache(
+  getNewsByTitle,
+  ["public-news-by-title"],
+  { revalidate: 15 }
+);
+
+export const getPublicNewsBySlug = withCache(
+  getNewsBySlug,
+  ["public-news-by-slug"],
+  { revalidate: 15 }
+);
+
+export const getPublicNewsByCategorySlug = withCache(
+  getNewsByCategorySlug,
+  ["public-news-by-category-slug"],
+  { revalidate: 15 }
+);

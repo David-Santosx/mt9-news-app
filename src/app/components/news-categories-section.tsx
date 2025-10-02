@@ -15,7 +15,7 @@ import Link from "next/link";
 import { NewsCategories } from "@/lib/schemas/news-schema";
 import { getPublicNewsByCategory, getPublicNewsByCategorySlug } from "../actions/noticias/get-news";
 import { useEffect, useState, useCallback } from "react";
-import { News } from "@/../prisma/generated";
+import { News } from "@/app/generated/prisma";
 import { notifications } from "@mantine/notifications";
 import { InstagramIcon } from "lucide-react";
 import WeatherSection from "./weather-section";

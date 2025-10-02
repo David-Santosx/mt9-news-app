@@ -1,4 +1,4 @@
-import { AdPosition } from "@/../prisma/generated";
+import { AdPosition } from "@/app/generated/prisma";
 import { z } from "zod";
 
 // Lista de categorias para ser usada tanto no schema quanto no formulário
@@ -7,17 +7,15 @@ export const AdPositionList = [AdPosition.HEADER, AdPosition.HIGHLIGHT];
 export const adsSchema = z.object({
   campaing: z.string().min(5, "A campanha deve ter pelo menos 5 caracteres"),
   startDate: z
-    .date()
+    .union([z.date(), z.string().datetime()])
+    .transform((val) => new Date(val))
     .optional()
     .default(() => new Date()),
   endDate: z
-    .date()
+    .union([z.date(), z.string().datetime()])
+    .transform((val) => new Date(val))
     .optional()
-    .default(() => {
-      const date = new Date();
-      date.setTime(date.getTime() + 30 * 24 * 60 * 60 * 1000); // Padrão para 30 dias após a data atual
-      return date;
-    }),
+    .default(() => new Date(new Date().setDate(new Date().getDate() + 30))),
   image: z
     .any()
     .refine((file) => file.size <= 10 * 1024 * 1024, {
