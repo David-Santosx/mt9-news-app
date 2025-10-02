@@ -10,7 +10,7 @@ import {
 } from "@mantine/core";
 import { NewspaperIcon } from "lucide-react";
 import { getPublicNews } from "../actions/noticias/get-news";
-import { News } from "@/app/generated/prisma";
+import { News } from "@prisma/client";
 import Link from "next/link";
 
 export function NewsTicker() {

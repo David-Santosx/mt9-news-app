@@ -1,7 +1,7 @@
 "use server";
 import { withCache } from "@/lib/cache";
 import { prisma } from "@/lib/prisma";
-import { AdPosition, Advertisement as PrismaAds } from "@/app/generated/prisma";
+import { AdPosition, Advertisement as PrismaAds } from "@prisma/client";
 
 /**
  * Busca todos os anúncios.

@@ -1,4 +1,4 @@
-import { AdPosition } from "@/app/generated/prisma";
+import { AdPosition } from "@prisma/client";
 import { z } from "zod";
 
 // Lista de categorias para ser usada tanto no schema quanto no formulário

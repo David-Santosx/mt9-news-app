@@ -1,11 +1,12 @@
 import type { NextConfig } from "next";
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const { PrismaPlugin } = require('@prisma/nextjs-monorepo-workaround-plugin')
 
 const nextConfig: NextConfig = {
   output: "standalone", // Modo otimizado para reduzir tamanho do deploy
   experimental: {
     optimizePackageImports: [
       "@mantine/core",
-      "@prisma/client",
       "@mantine/hooks",
     ],
     serverActions: {
@@ -14,9 +15,7 @@ const nextConfig: NextConfig = {
   },
   webpack: (config, { isServer }) => {
     if (isServer) {
-      // Otimização para reduzir o tamanho do serverless bundle
-      // Evita duplicação dos engines do Prisma
-      config.externals = [...(config.externals || []), "@prisma/engines"];
+      config.plugins = [...config.plugins, new PrismaPlugin()];
     }
     return config;
   },
