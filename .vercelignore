@@ -12,10 +12,6 @@ README.md
 docker-compose.yml
 docker/
 
-# Prisma - evitar arquivos duplicados
-prisma/migrations
-*.log
-
 # Arquivos de teste
 **/*.test.*
 **/*.spec.*
