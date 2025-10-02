@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: [
       "@mantine/core",
+      "@prisma/client",
       "@mantine/hooks",
     ],
     serverActions: {
@@ -17,7 +18,6 @@ const nextConfig: NextConfig = {
       // Evita duplicação dos engines do Prisma
       config.externals = [...(config.externals || []), "@prisma/engines"];
     }
-    return config;
   },
   compress: true,
   poweredByHeader: false,

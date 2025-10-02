@@ -223,6 +223,14 @@ const config = {
         "fromEnvVar": null,
         "value": "windows",
         "native": true
+      },
+      {
+        "fromEnvVar": null,
+        "value": "linux-musl"
+      },
+      {
+        "fromEnvVar": null,
+        "value": "rhel-openssl-1.0.x"
       }
     ],
     "previewFeatures": [],
@@ -240,6 +248,7 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
+  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
@@ -248,8 +257,8 @@ const config = {
       }
     }
   },
-  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/app/generated/prisma\"\n}\n\ndatasource db {\n  provider  = \"postgresql\"\n  url       = env(\"DATABASE_URL\")\n  directUrl = env(\"DIRECT_DATABASE_URL\")\n}\n\nmodel User {\n  id            String    @id @default(cuid())\n  name          String\n  email         String\n  emailVerified Boolean\n  image         String?\n  createdAt     DateTime\n  updatedAt     DateTime\n  role          String?\n  banned        Boolean?\n  banReason     String?\n  banExpires    DateTime?\n  sessions      Session[]\n  accounts      Account[]\n\n  @@unique([email])\n  @@map(\"user\")\n}\n\nmodel Session {\n  id             String   @id @default(cuid())\n  expiresAt      DateTime\n  token          String\n  createdAt      DateTime\n  updatedAt      DateTime\n  ipAddress      String?\n  userAgent      String?\n  userId         String\n  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n  impersonatedBy String?\n\n  @@unique([token])\n  @@map(\"session\")\n}\n\nmodel Account {\n  id                    String    @id @default(cuid())\n  accountId             String\n  providerId            String\n  userId                String\n  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)\n  accessToken           String?\n  refreshToken          String?\n  idToken               String?\n  accessTokenExpiresAt  DateTime?\n  refreshTokenExpiresAt DateTime?\n  scope                 String?\n  password              String?\n  createdAt             DateTime\n  updatedAt             DateTime\n\n  @@map(\"account\")\n}\n\nmodel Verification {\n  id         String    @id @default(cuid())\n  identifier String\n  value      String\n  expiresAt  DateTime\n  createdAt  DateTime?\n  updatedAt  DateTime?\n\n  @@map(\"verification\")\n}\n\nmodel News {\n  id           String   @id @default(cuid())\n  title        String   @unique\n  slug         String   @unique\n  source       String?\n  imageSource  String?\n  subtitle     String?\n  publisher    String\n  tags         String[]\n  category     String\n  slugCategory String\n  content      String\n  publishedAt  DateTime\n  image        String?\n  createdAt    DateTime @default(now())\n  updatedAt    DateTime @updatedAt\n}\n\nmodel Advertisement {\n  id        String     @id @default(cuid())\n  campaing  String     @unique\n  startDate DateTime\n  endDate   DateTime\n  image     String?\n  link      String?\n  position  AdPosition\n  createdAt DateTime   @default(now())\n  updatedAt DateTime   @updatedAt\n}\n\nenum AdPosition {\n  HEADER // 728x90\n  HIGHLIGHT // 300x250\n}\n",
-  "inlineSchemaHash": "c083de37327c3690ef8a0bfa61ec84dc10bc255c86d54d7ffeddce3dc9def6c5",
+  "inlineSchema": "generator client {\n  provider      = \"prisma-client-js\"\n  output        = \"../src/app/generated/prisma\"\n  binaryTargets = [\"native\", \"linux-musl\", \"rhel-openssl-1.0.x\"] // Added for better compatibility across different environments like Vercel\n}\n\ndatasource db {\n  provider  = \"postgresql\"\n  url       = env(\"DATABASE_URL\")\n  directUrl = env(\"DIRECT_DATABASE_URL\")\n}\n\nmodel User {\n  id            String    @id @default(cuid())\n  name          String\n  email         String\n  emailVerified Boolean\n  image         String?\n  createdAt     DateTime\n  updatedAt     DateTime\n  role          String?\n  banned        Boolean?\n  banReason     String?\n  banExpires    DateTime?\n  sessions      Session[]\n  accounts      Account[]\n\n  @@unique([email])\n  @@map(\"user\")\n}\n\nmodel Session {\n  id             String   @id @default(cuid())\n  expiresAt      DateTime\n  token          String\n  createdAt      DateTime\n  updatedAt      DateTime\n  ipAddress      String?\n  userAgent      String?\n  userId         String\n  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n  impersonatedBy String?\n\n  @@unique([token])\n  @@map(\"session\")\n}\n\nmodel Account {\n  id                    String    @id @default(cuid())\n  accountId             String\n  providerId            String\n  userId                String\n  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)\n  accessToken           String?\n  refreshToken          String?\n  idToken               String?\n  accessTokenExpiresAt  DateTime?\n  refreshTokenExpiresAt DateTime?\n  scope                 String?\n  password              String?\n  createdAt             DateTime\n  updatedAt             DateTime\n\n  @@map(\"account\")\n}\n\nmodel Verification {\n  id         String    @id @default(cuid())\n  identifier String\n  value      String\n  expiresAt  DateTime\n  createdAt  DateTime?\n  updatedAt  DateTime?\n\n  @@map(\"verification\")\n}\n\nmodel News {\n  id           String   @id @default(cuid())\n  title        String   @unique\n  slug         String   @unique\n  source       String?\n  imageSource  String?\n  subtitle     String?\n  publisher    String\n  tags         String[]\n  category     String\n  slugCategory String\n  content      String\n  publishedAt  DateTime\n  image        String?\n  createdAt    DateTime @default(now())\n  updatedAt    DateTime @updatedAt\n}\n\nmodel Advertisement {\n  id        String     @id @default(cuid())\n  campaing  String     @unique\n  startDate DateTime\n  endDate   DateTime\n  image     String?\n  link      String?\n  position  AdPosition\n  createdAt DateTime   @default(now())\n  updatedAt DateTime   @updatedAt\n}\n\nenum AdPosition {\n  HEADER // 728x90\n  HIGHLIGHT // 300x250\n}\n",
+  "inlineSchemaHash": "2214b025ddfad50e36213bf65501cab1bcd4b4bd3dd60dc3c66ea309ef554c06",
   "copyEngine": true
 }
 
@@ -290,6 +299,14 @@ Object.assign(exports, Prisma)
 // file annotations for bundling tools to include these files
 path.join(__dirname, "query_engine-windows.dll.node");
 path.join(process.cwd(), "src/app/generated/prisma/query_engine-windows.dll.node")
+
+// file annotations for bundling tools to include these files
+path.join(__dirname, "libquery_engine-linux-musl.so.node");
+path.join(process.cwd(), "src/app/generated/prisma/libquery_engine-linux-musl.so.node")
+
+// file annotations for bundling tools to include these files
+path.join(__dirname, "libquery_engine-rhel-openssl-1.0.x.so.node");
+path.join(process.cwd(), "src/app/generated/prisma/libquery_engine-rhel-openssl-1.0.x.so.node")
 // file annotations for bundling tools to include these files
 path.join(__dirname, "schema.prisma");
 path.join(process.cwd(), "src/app/generated/prisma/schema.prisma")
