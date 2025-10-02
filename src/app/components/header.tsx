@@ -30,6 +30,11 @@ const headerLinks = NewsCategories.map((category) => ({
 export default function Header() {
   const [opened, { toggle, close }] = useDisclosure(false);
   const theme = useMantineTheme();
+  const currentDate = new Date().toLocaleDateString("pt-BR", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 
   return (
     <header>
@@ -38,13 +43,12 @@ export default function Header() {
         <Container size="xl" h="100%">
           <Flex justify="space-between" align="center" h="100%">
             <Text c="white" fs="italic" size="sm">
-              Seu portal de informação confiável e atualizada.
+              Seu portal de informação confiável e atualizada | {currentDate}
             </Text>
-            <Group gap="xs">
+            <Group>
               <Text c="white" size="sm">
-                @mt9.com.br
+                Siga-nos no Instagram:
               </Text>
-              <Divider c="dark" orientation="vertical" />
               <ActionIcon
                 variant="transparent"
                 size="sm"
