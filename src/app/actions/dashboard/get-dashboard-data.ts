@@ -8,10 +8,25 @@ export type NewsCount = {
   createdAt: string;
 };
 
+export type CategoryCount = {
+  category: string;
+  count: number;
+};
+
 export type DashboardData = {
   totalNews: number;
   totalAds: number;
   newsCountByDay: NewsCount[];
+  categoryDistribution: CategoryCount[];
+  latestNews: {
+    id: string;
+    title: string;
+    subtitle: string | null;
+    slug: string;
+    image: string | null;
+    publishedAt: Date;
+    category: string;
+  } | null;
 };
 
 export const getDashboardData = async (): Promise<DashboardData> => {
@@ -38,11 +53,49 @@ export const getDashboardData = async (): Promise<DashboardData> => {
       count: item._count.id,
       createdAt: item.publishedAt.toISOString(),
     }));
+    
+    // Busca a notícia mais recente
+    const latestNews = await prisma.news.findFirst({
+      select: {
+        id: true,
+        title: true,
+        subtitle: true,
+        slug: true,
+        image: true,
+        publishedAt: true,
+        category: true,
+      },
+      orderBy: {
+        publishedAt: "desc",
+      },
+    });
+    
+    // Busca a distribuição de notícias por categoria (limitado às 10 notícias mais recentes)
+    const recentNewsByCategory = await prisma.news.groupBy({
+      by: ["category"],
+      _count: {
+        id: true,
+      },
+      orderBy: {
+        _count: {
+          id: "desc",
+        },
+      },
+      take: 10, // Limita a 10 categorias para não sobrecarregar o gráfico
+    });
+
+    // Formata os dados de distribuição por categoria
+    const categoryDistribution: CategoryCount[] = recentNewsByCategory.map((item) => ({
+      category: item.category,
+      count: item._count.id,
+    }));
 
     return {
       totalNews,
       totalAds,
       newsCountByDay: formattedNewsCount,
+      categoryDistribution,
+      latestNews,
     };
   } catch (error) {
     console.error("Erro ao buscar dados do dashboard:", error);
