@@ -16,6 +16,7 @@ import { Notifications } from "@mantine/notifications";
 import { ModalsProvider } from "@mantine/modals";
 import type { Metadata } from "next";
 import { seedAdminUser } from "./actions/admin/seed";
+import { Analytics } from "@vercel/analytics/next"
 
 const rubik = Rubik({
   variable: "--font-rubik",
@@ -101,6 +102,7 @@ export default function RootLayout({
           <Notifications />
           <ModalsProvider>{children}</ModalsProvider>
         </MantineProvider>
+        <Analytics />
       </body>
     </html>
   );
