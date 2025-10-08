@@ -26,6 +26,8 @@ export default function NewsCategoriesSection() {
     {}
   );
   const [featuredNews, setFeaturedNews] = useState<News[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [hasAnyCategoryWithNews, setHasAnyCategoryWithNews] = useState(false);
 
   // Função para embaralhar array (algoritmo Fisher-Yates)
   const shuffleArray = <T,>(array: T[]): T[] => {
@@ -37,61 +39,70 @@ export default function NewsCategoriesSection() {
     return shuffled;
   };
 
-  const fetchNewsByCategory = useCallback(async (category: string, limit: number) => {
-    try {
-      // Usa slugify apenas para a busca, mas mantém a categoria original como chave
-      const news = await getPublicNewsByCategorySlug(slugify(category, { lower: true }), limit);
-      setNewsByCategory((prev) => ({
-        ...prev,
-        [category]: news, // Usa a categoria original como chave
-      }));
-    } catch (error) {
-      if (error instanceof Error) {
-        notifications.show({
-          title: "Erro ao buscar notícias",
-          message: error.message,
-          color: "red",
-        });
-      }
-      notifications.show({
-        title: "Erro",
-        message: "Não foi possível carregar as notícias desta categoria.",
-        color: "red",
-      });
-    }
-  }, []);
+  // Esta função não é mais necessária pois o carregamento está sendo feito diretamente no useEffect
 
   // Função para buscar notícias em destaque aleatórias
   const fetchFeaturedNews = useCallback(async () => {
     try {
       // Busca algumas notícias de qualquer categoria
       const allNews = await getPublicNewsByCategory(NewsCategories[0], 10);
-      // Embaralha e pega apenas 3
-      const randomNews = shuffleArray(allNews).slice(0, 3);
-      setFeaturedNews(randomNews);
+      
+      if (allNews && allNews.length > 0) {
+        // Embaralha e pega apenas 3
+        const randomNews = shuffleArray(allNews).slice(0, 3);
+        setFeaturedNews(randomNews);
+      } else {
+        setFeaturedNews([]);
+      }
     } catch (error) {
+      setFeaturedNews([]);
       if (error instanceof Error) {
         notifications.show({
           title: "Erro ao buscar notícias em destaque",
           message: error.message,
           color: "red",
         });
+      } else {
+        notifications.show({
+          title: "Erro",
+          message: "Não foi possível carregar as notícias em destaque.",
+          color: "red",
+        });
       }
-      notifications.show({
-        title: "Erro",
-        message: "Não foi possível carregar as notícias em destaque.",
-        color: "red",
-      });
     }
   }, []);
 
   useEffect(() => {
-    NewsCategories.forEach((category) => {
-      fetchNewsByCategory(category, 3);
-      console.log(`Buscando notícias para a categoria: ${category}`);
-    });
+    setLoading(true);
+    let categoriesWithNews = false;
+    
+    const fetchAllCategories = async () => {
+      const promises = NewsCategories.map(async (category) => {
+        console.log(`Buscando notícias para a categoria: ${category}`);
+        try {
+          const news = await getPublicNewsByCategorySlug(slugify(category, { lower: true }), 3);
+          if (news.length > 0) {
+            categoriesWithNews = true;
+            setNewsByCategory((prev) => ({
+              ...prev,
+              [category]: news,
+            }));
+          }
+          return { category, hasNews: news.length > 0 };
+        } catch (error) {
+          console.error(`Erro ao buscar categoria ${category}:`, error);
+          return { category, hasNews: false };
+        }
+      });
+      
+      await Promise.all(promises);
+      setHasAnyCategoryWithNews(categoriesWithNews);
+      setLoading(false);
+    };
+    
+    fetchAllCategories();
     fetchFeaturedNews();
-  }, [fetchNewsByCategory, fetchFeaturedNews]);
+  }, [fetchFeaturedNews]);
 
   const renderNewsCard = (news: News) => (
     <Link href={`/noticias/${news.slug}`} style={{ textDecoration: "none" }}>
@@ -188,41 +199,77 @@ export default function NewsCategoriesSection() {
         <Grid gutter="xl">
           {/* Coluna principal com as categorias */}
           <GridCol span={{ base: 12, lg: 8 }}>
-            {NewsCategories.map((category) => (
-              <Box key={category} mb="xl">
-                <Box mb="lg">
-                  <Title order={2} size="h3" fw={700}>
-                    Notícias {category}
-                  </Title>
-                  <Box
-                    mt="xs"
-                    style={{
-                      height: 4,
-                      width: 60,
-                      backgroundColor: "var(--mantine-color-blue-filled)",
-                      borderRadius: "var(--mantine-radius-xl)",
-                    }}
-                  />
+            {loading ? (
+              // Mostra skeletons enquanto carrega
+              NewsCategories.slice(0, 2).map((category, idx) => (
+                <Box key={`loading-${idx}`} mb="xl">
+                  <Box mb="lg">
+                    <Title order={2} size="h3" fw={700}>
+                      Carregando...
+                    </Title>
+                    <Box
+                      mt="xs"
+                      style={{
+                        height: 4,
+                        width: 60,
+                        backgroundColor: "var(--mantine-color-blue-filled)",
+                        borderRadius: "var(--mantine-radius-xl)",
+                      }}
+                    />
+                  </Box>
+                  <Grid>
+                    {Array.from({ length: 3 }).map((_, index) => (
+                      <GridCol key={index} span={{ base: 12, sm: 6, md: 4 }}>
+                        {renderSkeleton()}
+                      </GridCol>
+                    ))}
+                  </Grid>
                 </Box>
+              ))
+            ) : !hasAnyCategoryWithNews ? (
+              // Feedback quando não há notícias em nenhuma categoria
+              <Paper p="xl" withBorder ta="center">
+                <Box py="xl">
+                  <Title order={2} mb="md">Nenhuma notícia disponível</Title>
+                  <Text c="dimmed">
+                    No momento não temos notícias disponíveis para exibir. Por favor, volte mais tarde.
+                  </Text>
+                </Box>
+              </Paper>
+            ) : (
+              // Exibe apenas categorias que possuem notícias
+              Object.entries(newsByCategory).map(([category, news]) => 
+                news && news.length > 0 ? (
+                  <Box key={category} mb="xl">
+                    <Box mb="lg">
+                      <Title order={2} size="h3" fw={700}>
+                        Notícias {category}
+                      </Title>
+                      <Box
+                        mt="xs"
+                        style={{
+                          height: 4,
+                          width: 60,
+                          backgroundColor: "var(--mantine-color-blue-filled)",
+                          borderRadius: "var(--mantine-radius-xl)",
+                        }}
+                      />
+                    </Box>
 
-                <Grid>
-                  {newsByCategory[category]?.length > 0
-                    ? newsByCategory[category].map((news) => (
+                    <Grid>
+                      {news.map((item) => (
                         <GridCol
-                          key={news.id}
+                          key={item.id}
                           span={{ base: 12, sm: 6, md: 4 }}
                         >
-                          {renderNewsCard(news)}
-                        </GridCol>
-                      ))
-                    : Array.from({ length: 3 }).map((_, index) => (
-                        <GridCol key={index} span={{ base: 12, sm: 6, md: 4 }}>
-                          {renderSkeleton()}
+                          {renderNewsCard(item)}
                         </GridCol>
                       ))}
-                </Grid>
-              </Box>
-            ))}
+                    </Grid>
+                  </Box>
+                ) : null
+              )
+            )}
           </GridCol>
 
           {/* Coluna lateral com notícias em destaque */}
@@ -237,13 +284,24 @@ export default function NewsCategoriesSection() {
               </Title>
 
               <Stack gap="md">
-                {featuredNews.length > 0
-                  ? featuredNews.map((news) => (
-                      <Box key={news.id}>{renderNewsCard(news)}</Box>
-                    ))
-                  : Array.from({ length: 3 }).map((_, index) => (
-                      <Box key={index}>{renderSkeleton()}</Box>
-                    ))}
+                {loading ? (
+                  // Mostra skeletons durante o carregamento
+                  Array.from({ length: 3 }).map((_, index) => (
+                    <Box key={index}>{renderSkeleton()}</Box>
+                  ))
+                ) : featuredNews.length > 0 ? (
+                  // Exibe as notícias em destaque se existirem
+                  featuredNews.map((news) => (
+                    <Box key={news.id}>{renderNewsCard(news)}</Box>
+                  ))
+                ) : (
+                  // Feedback quando não há notícias em destaque
+                  <Box ta="center" py="md">
+                    <Text c="dimmed">
+                      Não há notícias em destaque no momento.
+                    </Text>
+                  </Box>
+                )}
               </Stack>
             </Paper>
             <Divider my="xl" />
