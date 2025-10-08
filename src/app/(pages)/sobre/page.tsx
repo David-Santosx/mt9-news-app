@@ -35,12 +35,14 @@ export default function Page() {
     <Container size="xl" py="xl">
       {/* Cabeçalho */}
       <Box
-              bdrs="md"
-              className="bg-[var(--mantine-color-blue-3)]"
-        style={{
-          position: 'relative',
-          backgroundBlendMode: 'multiply',
-        }}
+              style={{
+                position: 'relative',
+                backgroundImage: 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)',
+                backgroundSize: 'cover',
+                borderRadius: '8px',
+                overflow: 'hidden',
+                boxShadow: '0 6px 16px rgba(0, 0, 0, 0.1)',
+              }}
       >
         <Flex
           direction="column"
@@ -51,21 +53,37 @@ export default function Page() {
             textAlign: 'center',
           }}
         >
-          <Image 
-            src="/images/mt9-logo.svg" 
-            width={180} 
-            height={100} 
-            alt="MT9 Notícias e Comércios" 
-            style={{ marginBottom: '1.5rem' }}
-          />
+          <Box
+            style={{
+              backgroundColor: 'white',
+              borderRadius: '50%',
+              padding: '20px',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+              marginBottom: '1.5rem',
+              display: 'inline-flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              width: '200px',
+              height: '200px',
+            }}
+          >
+            <Image 
+              src="/images/mt9-logo.svg" 
+              width={160} 
+              height={90} 
+              alt="MT9 Notícias e Comércios" 
+              style={{ objectFit: 'contain' }}
+            />
+          </Box>
           <Title 
             order={1} 
             c="white" 
             style={{ 
               fontSize: '2.5rem',
               fontWeight: 800,
-              textShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
-              marginBottom: '1rem'
+              textShadow: '0 3px 6px rgba(0, 0, 0, 0.3)',
+              marginBottom: '1.2rem',
+              letterSpacing: '0.5px'
             }}
           >
             Conheça o MT9 Notícias & Comércios
@@ -76,7 +94,8 @@ export default function Page() {
             style={{ 
               maxWidth: '800px', 
               fontWeight: 500,
-              textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)',
+              textShadow: '0 2px 4px rgba(0, 0, 0, 0.4)',
+              letterSpacing: '0.3px',
             }}
           >
             Sua fonte confiável de informações sobre o Mato Grosso
