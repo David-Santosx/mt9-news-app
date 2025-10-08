@@ -23,7 +23,7 @@ import { BarChart, DonutChart, PieChart } from "@mantine/charts";
 import { format, formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Newspaper, MonitorPlay, Clock, CalendarDays, ExternalLink, RefreshCw } from "lucide-react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { notifications } from "@mantine/notifications";
 import { getDashboardDataCached } from "../../../actions/dashboard/get-dashboard-data";
 import type { DashboardData } from "../../../actions/dashboard/get-dashboard-data";
@@ -57,12 +57,47 @@ export default function Page() {
     fetchDashboardData();
   }, []);
 
-  // Formata os dados para o gráfico de evolução temporal
-  const timeChartData =
-    data?.newsCountByDay.map((item) => ({
-      date: format(new Date(item.createdAt), "dd MMM", { locale: ptBR }),
-      Notícias: item.count,
-    })) || [];
+  // Formata os dados para o gráfico de evolução temporal, agrupando por dia
+  const timeChartData = React.useMemo(() => {
+    if (!data?.newsCountByDay) return [];
+
+    // Agrupar notícias por data formatada (dia)
+    const groupedByDay = data.newsCountByDay.reduce((acc, item) => {
+      const date = format(new Date(item.createdAt), "dd MMM", { locale: ptBR });
+      
+      if (!acc[date]) {
+        acc[date] = 0;
+      }
+      
+      acc[date] += item.count;
+      return acc;
+    }, {} as Record<string, number>);
+    
+    // Converter para o formato do gráfico e ordenar por data
+    return Object.entries(groupedByDay)
+      .map(([date, count]) => ({
+        date,
+        Notícias: count,
+      }))
+      .sort((a, b) => {
+        // Extrair dia e mês para ordenação
+        const [dayA, monthA] = a.date.split(' ');
+        const [dayB, monthB] = b.date.split(' ');
+        
+        // Comparar mês primeiro
+        const monthOrder = getMonthIndex(monthA) - getMonthIndex(monthB);
+        if (monthOrder !== 0) return monthOrder;
+        
+        // Se mesmo mês, comparar dia
+        return parseInt(dayA) - parseInt(dayB);
+      });
+  }, [data?.newsCountByDay]);
+  
+  // Função auxiliar para obter o índice do mês
+  function getMonthIndex(monthAbbr: string): number {
+    const months = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+    return months.findIndex(m => monthAbbr.toLowerCase().startsWith(m));
+  }
 
   // Formata os dados para o gráfico de distribuição por categoria
   const categoryChartData =
@@ -103,8 +138,15 @@ export default function Page() {
 
   // Remover logs de produção
   if (process.env.NODE_ENV !== 'production') {
-    console.log("Dashboard Time Data:", timeChartData);
+    console.log("Dashboard Time Data (grouped by day):", timeChartData);
     console.log("Dashboard Category Data:", categoryChartData);
+    
+    // Log estatísticas do gráfico para debug
+    if (timeChartData.length > 0) {
+      console.log("Número de dias no gráfico:", timeChartData.length);
+      console.log("Total de notícias no gráfico:", 
+        timeChartData.reduce((sum, item) => sum + item.Notícias, 0));
+    }
   }
 
   // Formatar data relativa (ex: "há 2 dias")
@@ -253,8 +295,13 @@ export default function Page() {
                 <Stack gap="xs" mb="lg">
                   <Title order={3} size="h3">Evolução de Notícias</Title>
                   <Text size="sm" c="dimmed">
-                    Quantidade de notícias publicadas por dia nos últimos 30 dias
+                    Quantidade de notícias publicadas por dia
                   </Text>
+                  {timeChartData.length === 0 && (
+                    <Text size="sm" c="dimmed" fs="italic">
+                      Nenhum dado disponível para o período
+                    </Text>
+                  )}
                 </Stack>
                 <Box style={{ height: 320 }}>
                   <BarChart
@@ -276,7 +323,7 @@ export default function Page() {
                     withTooltip
                     barProps={{
                       radius: 4,
-                      width: 24,
+                      width: 36, // Barra mais larga para melhor visualização
                     }}
                     valueFormatter={(value) => `${value} notícias`}
                     yAxisProps={{
