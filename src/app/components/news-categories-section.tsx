@@ -15,9 +15,9 @@ import Link from "next/link";
 import { NewsCategories } from "@/lib/schemas/news-schema";
 import { getPublicNewsByCategory, getPublicNewsByCategorySlug } from "../actions/noticias/get-news";
 import { useEffect, useState, useCallback } from "react";
-import { News } from "@prisma/client";
+import { News } from "@prisma/client"
 import { notifications } from "@mantine/notifications";
-import { InstagramIcon } from "lucide-react";
+import { FacebookIcon, InstagramIcon } from "lucide-react";
 import WeatherSection from "./weather-section";
 import slugify from "slugify";
 
@@ -249,9 +249,8 @@ export default function NewsCategoriesSection() {
             <Divider my="xl" />
             <Paper p="xl" radius="md" withBorder>
               <Stack align="center" gap="md">
-                <InstagramIcon size={48} color="#E1306C" />
                 <Title order={3} ta="center" fw={600}>
-                  Siga-nos no Instagram
+                  Siga-nos nas Redes Sociais
                 </Title>
                 <Text size="sm" c="dimmed" ta="center" maw={300}>
                   Fique por dentro das últimas notícias, conteúdo exclusivo e
@@ -268,12 +267,31 @@ export default function NewsCategoriesSection() {
                   href="https://www.instagram.com/mt9.com.br"
                   style={{
                     transition: "transform 0.2s ease",
+                    marginBottom: "10px",
                     "&:hover": {
                       transform: "scale(1.02)",
                     },
                   }}
                 >
-                  Seguir @mt9.com.br
+                  Seguir no Instagram
+                </Button>
+                <Button
+                  size="lg"
+                  fullWidth
+                  leftSection={<FacebookIcon size={20} />}
+                  style={{
+                    backgroundColor: "#1877F2",
+                    color: "white",
+                    transition: "transform 0.2s ease",
+                    "&:hover": {
+                      transform: "scale(1.02)",
+                    },
+                  }}
+                  component={Link}
+                  target="_blank"
+                  href="https://www.facebook.com/profile.php?id=61578324400179"
+                >
+                  Seguir no Facebook
                 </Button>
               </Stack>
             </Paper>
