@@ -13,7 +13,6 @@ import {
 } from "@mantine/core";
 import {
   Home,
-  Settings,
   LogOut,
   ChevronRight,
   Newspaper,
@@ -96,26 +95,28 @@ export default function Sidebar() {
         onClick={() => handleNavigation(item.href)}
         styles={(theme) => ({
           root: {
-            borderRadius: theme.radius.md,
-            marginBottom: rem(4),
-            borderBottom: "solid 1px var(--mantine-color-gray-4)",
-            padding: shouldCollapse ? rem(8) : rem(12),
+            borderRadius: theme.radius.sm,
+            marginBottom: rem(6),
+            padding: shouldCollapse ? rem(12) : rem(14),
             transition: "all 0.2s ease",
             justifyContent: shouldCollapse ? "center" : "flex-start",
             "&:hover": {
-              backgroundColor: "var(--mantine-color-gray-5)",
+              backgroundColor: theme.colors.gray[1],
+              transform: "translateX(3px)",
             },
             "&[dataActive]": {
               backgroundColor: theme.colors.blue[0],
               color: theme.colors.blue[7],
-              borderLeft: `${rem(4)} solid ${theme.colors.blue[6]}`,
+              fontWeight: 600,
+              borderLeft: `${rem(3)} solid ${theme.colors.blue[6]}`,
             },
           },
           label: {
             fontWeight: 500,
+            fontSize: theme.fontSizes.sm,
           },
           section: {
-            marginRight: shouldCollapse ? 0 : undefined,
+            marginRight: shouldCollapse ? 0 : rem(12),
           },
         })}
       >
@@ -150,36 +151,44 @@ export default function Sidebar() {
     <AppShellNavbar
       w={sidebarWidth}
       p="md"
-      bg="gray.3"
+      bg="white"
       style={{
         transition: "width 0.3s ease",
-        borderRight: "1px solid var(--mantine-color-gray-4)",
+        borderRight: "1px solid var(--mantine-color-gray-2)",
         position: "fixed",
         height: "100vh",
         top: 0,
         left: 0,
         zIndex: 100,
+        boxShadow: "0 0 15px rgba(0, 0, 0, 0.05)",
       }}
     >
       {/* Header da Sidebar */}
-      <Group justify="center" mb="md">
+      <Group justify="center" mb="xl" mt="md">
         {!shouldCollapse ? (
-          <Image
-            src={"/images/mt9-logo.svg"}
-            alt="MT9 - Notícias e Comércios"
-            width={70}
-            height={50}
-          />
+          <Box>
+            <Image
+              src={"/images/mt9-logo.svg"}
+              alt="MT9 - Notícias e Comércios"
+              width={80}
+              height={55}
+              style={{ objectFit: "contain" }}
+            />
+            <Text size="xs" c="dimmed" ta="center" mt={4}>
+              Painel Administrativo
+            </Text>
+          </Box>
         ) : (
           <Box
-            w={40}
-            h={40}
-            bg="blue"
+            w={45}
+            h={45}
+            bg="blue.6"
             style={{
               borderRadius: "50%",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+              boxShadow: "0 3px 10px rgba(0, 0, 0, 0.1)",
             }}
           >
             <Text c="white" fw={700} size="md">
@@ -189,68 +198,41 @@ export default function Sidebar() {
         )}
       </Group>
 
-      <Divider mb="md" />
+      <Divider color="gray.2" mb="md" />
 
       {/* Menu de Navegação */}
       <ScrollArea flex={1} offsetScrollbars>
-        <Stack gap={2}>
-          {navigationItems.map((item) => renderNavItem(item))}
-        </Stack>
+        <Box px={shouldCollapse ? 0 : "xs"} py="md">
+          <Text size="xs" c="dimmed" fw={500} mb="sm" tt="uppercase" style={{ opacity: shouldCollapse ? 0 : 0.7 }}>
+            {!shouldCollapse && "Menu Principal"}
+          </Text>
+          <Stack gap={4}>
+            {navigationItems.map((item) => renderNavItem(item))}
+          </Stack>
+        </Box>
       </ScrollArea>
 
       {/* Footer da Sidebar */}
       <Box mt="auto" pt="md">
-        <Divider mb="md" />
-
-        {shouldCollapse ? (
-          <Tooltip label="Configurações" position="right" withArrow>
-            <NavLink
-              leftSection={<Settings size={20} />}
-              onClick={() => handleNavigation("/configuracoes")}
-              styles={(theme) => ({
-                root: {
-                  borderRadius: theme.radius.md,
-                  marginBottom: rem(4),
-                  padding: rem(8),
-                  justifyContent: "center",
-                  "&:hover": {
-                    backgroundColor: theme.colors.gray[1],
-                  },
-                },
-              })}
-            />
-          </Tooltip>
-        ) : (
-          <NavLink
-            label="Configurações"
-            leftSection={<Settings size={20} />}
-            onClick={() => handleNavigation("/configuracoes")}
-            styles={(theme) => ({
-              root: {
-                borderRadius: theme.radius.md,
-                marginBottom: rem(4),
-                padding: rem(12),
-                "&:hover": {
-                  backgroundColor: theme.colors.gray[1],
-                },
-              },
-            })}
-          />
-        )}
+        <Divider color="gray.2" mb="md" />
 
         {shouldCollapse ? (
           <Tooltip label="Sair" position="right" withArrow>
             <NavLink
               leftSection={<LogOut size={20} />}
-              c="red"
-              onClick={() => console.log("Logout")}
+              c="red.6"
+              onClick={async () => {
+                await authClient.signOut();
+                window.location.reload();
+              }}
               styles={(theme) => ({
                 root: {
-                  borderRadius: theme.radius.md,
-                  padding: rem(8),
+                  borderRadius: theme.radius.sm,
+                  padding: rem(12),
                   justifyContent: "center",
                   "&:hover": {
                     backgroundColor: theme.colors.red[0],
+                    transform: "translateX(3px)",
                   },
                 },
               })}
@@ -258,15 +240,26 @@ export default function Sidebar() {
           </Tooltip>
         ) : (
           <NavLink
-            label="Sair"
+            label="Sair da conta"
             leftSection={<LogOut size={20} />}
-            c="red"
-            bdrs={"md"}
-            p={rem(12)}
+            c="red.6"
             onClick={async () => {
               await authClient.signOut();
               window.location.reload();
             }}
+            styles={(theme) => ({
+              root: {
+                borderRadius: theme.radius.sm,
+                padding: rem(14),
+                "&:hover": {
+                  backgroundColor: theme.colors.red[0],
+                  transform: "translateX(3px)",
+                },
+              },
+              label: {
+                fontWeight: 500,
+              },
+            })}
           />
         )}
       </Box>
