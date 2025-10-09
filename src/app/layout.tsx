@@ -113,14 +113,14 @@ export default function RootLayout({
         <BreadcrumbSchema
           itemListElement={[
             { position: 1, name: 'Home', item: process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000' },
-            { position: 2, name: 'Notícia Geral', item: process.env.NEXT_PUBLIC_BASE_URL + '/noticias/geral' || 'http://localhost:3000/noticias/geral' },
-            { position: 3, name: 'Notícia Política', item: process.env.NEXT_PUBLIC_BASE_URL + '/noticias/politica' || 'http://localhost:3000/noticias/politica' },
-            { position: 4, name: 'Notícia Cidades', item: process.env.NEXT_PUBLIC_BASE_URL + '/noticias/cidades' || 'http://localhost:3000/noticias/cidades' },
-            { position: 5, name: 'Notícia Agronegócio', item: process.env.NEXT_PUBLIC_BASE_URL + '/noticias/agronegocio' || 'http://localhost:3000/noticias/agronegocio' },
-            { position: 6, name: 'Notícia Polícia', item: process.env.NEXT_PUBLIC_BASE_URL + '/noticias/policia' || 'http://localhost:3000/noticias/policia' },
-            { position: 7, name: 'Notícia Saúde', item: process.env.NEXT_PUBLIC_BASE_URL + '/noticias/saude' || 'http://localhost:3000/noticias/saude' },
-            { position: 8, name: 'Notícia Esportes', item: process.env.NEXT_PUBLIC_BASE_URL + '/noticias/esportes' || 'http://localhost:3000/noticias/esportes' },
-            { position: 9, name: 'Comércios', item: process.env.NEXT_PUBLIC_BASE_URL + '/comercios' || 'http://localhost:3000/comercios' },
+            { position: 2, name: 'Notícia Geral', item: process.env.NEXT_PUBLIC_BASE_URL + '/noticias/categoria/geral' || 'http://localhost:3000/noticias/geral' },
+            { position: 3, name: 'Notícia Política', item: process.env.NEXT_PUBLIC_BASE_URL + '/noticias/categoria/politica' || 'http://localhost:3000/noticias/politica' },
+            { position: 4, name: 'Notícia Cidades', item: process.env.NEXT_PUBLIC_BASE_URL + '/noticias/categoria/cidades' || 'http://localhost:3000/noticias/cidades' },
+            { position: 5, name: 'Notícia Agronegócio', item: process.env.NEXT_PUBLIC_BASE_URL + '/noticias/categoria/agronegocio' || 'http://localhost:3000/noticias/agronegocio' },
+            { position: 6, name: 'Notícia Polícia', item: process.env.NEXT_PUBLIC_BASE_URL + '/noticias/categoria/policia' || 'http://localhost:3000/noticias/policia' },
+            { position: 7, name: 'Notícia Saúde', item: process.env.NEXT_PUBLIC_BASE_URL + '/noticias/categoria/saude' || 'http://localhost:3000/noticias/saude' },
+            { position: 8, name: 'Notícia Esportes', item: process.env.NEXT_PUBLIC_BASE_URL + '/noticias/categoria/esportes' || 'http://localhost:3000/noticias/esportes' },
+            { position: 9, name: 'Comércios', item: process.env.NEXT_PUBLIC_BASE_URL + '/noticias/categoria/comercios' || 'http://localhost:3000/comercios' },
           ]}
         />
       </body>
