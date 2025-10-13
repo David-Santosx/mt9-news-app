@@ -7,6 +7,7 @@ import {
   Text,
   Title,
 } from "@mantine/core";
+import Script from "next/script";
 
 export default function Page() {
   const currentDate = new Date().toLocaleDateString("pt-BR", {
@@ -16,6 +17,7 @@ export default function Page() {
   });
 
   return (
+    <>
     <Container size="md" py="xl">
       <Stack gap="xl">
         <Box ta="center">
@@ -104,5 +106,7 @@ export default function Page() {
         </Text>
       </Stack>
     </Container>
+    <Script src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1306875437034957" crossOrigin="anonymous"/>
+    </>
   );
 }

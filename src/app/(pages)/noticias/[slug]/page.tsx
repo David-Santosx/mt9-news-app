@@ -27,6 +27,7 @@ import Link from "next/link";
 import AdDisplay from "@/app/components/ad-display";
 import ShareButtons from "@/app/components/share-buttons";
 import { Metadata } from "next";
+import Script from "next/script";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -156,6 +157,7 @@ export default async function Page({
   }
 
   return (
+    <>
     <Box bg="gray.0" py="xl">
       <Container size="lg" className="overflow-hidden">
         <Stack gap="xl"></Stack>
@@ -403,5 +405,7 @@ export default async function Page({
         </Paper>
       </Container>
     </Box>
+    <Script src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1306875437034957" crossOrigin="anonymous"/>
+    </>
   );
 }
