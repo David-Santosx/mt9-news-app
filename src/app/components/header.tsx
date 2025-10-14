@@ -138,7 +138,7 @@ export default function Header() {
       {/* Header Principal */}
       <Box bg="white" py={{ base: "md", lg: "xl" }}>
         <Container size="xl" px={{ base: "md", sm: "xl" }}>
-          <Stack gap={{ base: "md", lg: "xl" }}>
+          <Stack gap={"md"}>
             {/* Layout Desktop */}
             <Box display={{ base: "none", lg: "block" }}>
               {!loading && hasHeaderAd ? (
