@@ -203,3 +203,68 @@ export const getPublicNewsByCategorySlug = withCache(
   ["public-news-by-category-slug"],
   { revalidate: 15 }
 );
+
+/**
+ * Busca notícias por termo de pesquisa.
+ * @param searchTerm - Termo de pesquisa para buscar nas notícias.
+ * @param limit - Número de notícias a retornar (padrão é 10).
+ * @returns Array de notícias que correspondem ao termo de pesquisa.
+ * @throws Erro ao buscar notícias por termo.
+ */
+export async function searchNews(
+  searchTerm: string,
+  limit: number = 10
+): Promise<PrismaNews[]> {
+  try {
+    if (!searchTerm || searchTerm.trim().length < 2) {
+      return [];
+    }
+
+    const news = await prisma.news.findMany({
+      where: {
+        OR: [
+          {
+            title: {
+              contains: searchTerm,
+              mode: "insensitive",
+            },
+          },
+          {
+            subtitle: {
+              contains: searchTerm,
+              mode: "insensitive",
+            },
+          },
+          {
+            content: {
+              contains: searchTerm,
+              mode: "insensitive",
+            },
+          },
+          {
+            tags: {
+              has: searchTerm,
+            },
+          },
+        ],
+      },
+      orderBy: {
+        publishedAt: "desc",
+      },
+      take: limit,
+    });
+
+    return news;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`${error.message}`);
+    }
+    throw new Error("Erro ao buscar notícias por termo");
+  }
+}
+
+export const getPublicSearchNews = withCache(
+  searchNews,
+  ["public-search-news"],
+  { revalidate: 30 }
+);
